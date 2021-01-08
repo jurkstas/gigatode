@@ -308,22 +308,13 @@ dim neurons4(70) = @SMDDR,@SMDVL,@SMDVR,@URADL,@URADR,@URAVL,@URAVR,@URBL,@URBR,
 dim neurons1l(20) = len(ADAL),len(ADAR),len(ADEL),len(ADER),len(ADFL),len(ADFR),len(ADLL),len(ADLR),len(AFDL),len(AFDR),len(AIAL),len(AIAR),len(AIBL)
 
 print("hello world")
-'for i=0 to len(neurons1)
-'  print(neurons1(i))
-'next i
-'for i=0 to len(neurons2)
-'  print(neurons2(i))
-'next i
-'for i=0 to len(neurons3)
-'  print(neurons3(i))
-'next i
+
 for i=0 to len(neurons1l) 
   print(neurons1l(i))
 next i
 
 for i=0 to len(VD9) 
   print(VD9(i))
-  inc(i)
 next i
 
 print(len(neurons1l))
