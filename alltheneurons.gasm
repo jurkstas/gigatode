@@ -44,10 +44,8 @@ textWorkArea                      EQU                               0x7fa0
 
 ; Labels
 _entryPoint_                      EQU                               0x0200
-_next_0x0248                      EQU                               0x0244
 _page_0x0300                      EQU                               0x0300
-_next_0x0284                      EQU                               0x031e
-_page_0x0400                      EQU                               0x0400
+_next_0x0278                      EQU                               0x0315
 
 ; Global Variables
 _i                                EQU                               0x0030
@@ -662,13 +660,17 @@ _neurons3_array                   DW                                0x56c0 0x56b
 _neurons4_array                   EQU                               0x026c
 _neurons4_array                   DW                                0x40a0 0x3fbc 0x3fa2 0x41a2 0x3eee 0x3ede 0x3ecc 0x3eb8 0x3de4 0x3ea6 0x3dcc 0x3dbc 0x3dac 0x3ce6 0x3cd0 0x3cc0 0x3da0 0x3cac 0x3bd4 0x3bbe 0x3ba0 0x3ae6 0x3ad0 0x3abc 0x3aa0 0x39dc 0x39bc 0x38d6 0x39a4 0x38be 0x37d4 0x38a6 0x37be 0x37aa 0x36e4 0x3ca0 0x36c8 0x36aa 0x35e2 0x35c2 0x34d4 0x35b4 0x35a0 0x56a0 0x34ba 0x34a8 0x33f2 0x33e2 0x33ca 0x33b6 0x33a4 0x32f0 0x32e0 0x32ca 0x32bc 0x45a0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 0x32b0 
 _neurons1l_array                  EQU                               0x31d6
-_neurons1l_array                  DW                                0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 0x0002 
+_neurons1l_array                  DW                                0x0026 0x0022 0x003a 0x0028 0x0010 0x001c 0x0024 0x0020 0x0008 0x0008 0x001e 0x001a 0x0022 0x0022 0x0022 0x0022 0x0022 0x0022 0x0022 0x0022 0x0022 
 
 ; Strings
 
 ; Constant Strings
 _str_0x32a3                       EQU                               0x32a3
 _str_0x32a3                       DB                                11 'hello world' 0
+_str_0x37a1                       EQU                               0x37a1
+_str_0x37a1                       DB                                7 'lengths' 0
+_str_0x4aa1                       EQU                               0x4aa1
+_str_0x4aa1                       DB                                3 'VD9' 0
 
 ; Data
 
@@ -703,53 +705,33 @@ _entryPoint_                      LDI                               0x28
                                   PrintString                       _str_0x32a3
                                   NewLine                                                       ; Main: print("hello world")
 
-                                  LDI                               0
-                                  STW                               _i
-                                  LDI                               2
-                                  STW                               0xb0
-                                  LDI                               1
-                                  STW                               0xb2                        ; Main: for i=0 to len(neurons1l)
+                                  PrintString                       _str_0x37a1
+                                  NewLine                                                       ; Main: print("lengths")
 
-_next_0x0248                      LDWI                              0x31d6
-                                  ADDW                              _i
-                                  ADDW                              _i
-                                  DEEK                              
-                                  PrintAcInt16                      
-                                  NewLine                                                       ; Main: print(neurons1l(i))
+                                  PrintInt16                        0x002a
+                                  NewLine                                                       ; Main: print(#neurons1l)
+
+                                  PrintInt16                        0x000c
+                                  NewLine                                                       ; Main: print(#VD9)
 
                                   STLW                              0xFE
                                   LDWI                              _page_0x0300
                                   CALL                              giga_vAC
 _page_0x0300                      LDLW                              0xFE
-                                  ForNextFarVarAdd                  _i _next_0x0248 0xb0 0xb2   ; Main: next i
+                                  PrintString                       _str_0x4aa1
+                                  NewLine                                                       ; Main: print("VD9")
 
                                   LDI                               0
-                                  STW                               _i
-                                  LDI                               2
-                                  STW                               0xb0
-                                  LDI                               1
-                                  STW                               0xb2                        ; Main: for i=0 to len(VD9)
+                                  STW                               _i                          ; Main: for i=0 to (#VD9)/2-1
 
-_next_0x0284                      LDWI                              0x32b0
+_next_0x0278                      LDWI                              0x32b0
                                   ADDW                              _i
                                   ADDW                              _i
                                   DEEK                              
                                   PrintAcInt16                      
                                   NewLine                                                       ; Main: print(VD9(i))
 
-                                  STLW                              0xFE
-                                  LDWI                              _page_0x0400
-                                  CALL                              giga_vAC
-_page_0x0400                      LDLW                              0xFE
-                                  ForNextFarVarAdd                  _i _next_0x0284 0xb0 0xb2   ; Main: next i
-
-                                  LDI                               2
-                                  PrintAcInt16                      
-                                  NewLine                                                       ; Main: print(len(neurons1l))
-
-                                  LDI                               2
-                                  PrintAcInt16                      
-                                  NewLine                                                       ; Main: print(len(VD9))
+                                  ForNextFarInc                     _i _next_0x0278 5           ; Main: next i
 
                                   HALT                                                          ; Main: END
 
@@ -762,7 +744,7 @@ _page_0x0400                      LDLW                              0xFE
 ;****************************************************************************************************************************************
 
 romCheck                          EQU     0x2ccf
-scanlineMode                      EQU     0x37a0
+scanlineMode                      EQU     0x36a0
 resetVideoFlags                   EQU     0x2ea2
 initClearFuncs                    EQU     0x2ca8
 clearVertBlinds                   EQU     0x31a0
