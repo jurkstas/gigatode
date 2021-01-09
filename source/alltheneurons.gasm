@@ -37,7 +37,7 @@ regsWorkArea                      EQU                               0x0000
 textWorkArea                      EQU                               0x7fa0
 
 ; Includes
-%includePath                      "./runtime"
+%includePath                      "./runtime-v106"
 %include                          util.i
 %include                          gigatron.i
 %include                          macros.i
