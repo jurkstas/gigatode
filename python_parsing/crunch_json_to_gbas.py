@@ -39,31 +39,33 @@ rawWeightList = []
 rawNameList = []
 rawUberNameList = []
 
+with open('source/alltheneurons.gbas', 'w') as f:
+    for neuron in linkedNeurons:
+      conn = connectomeDict[neuron]
+      f.write('dim ')
+      if len(conn) > 1:
+        f.write(neuron + '(' + str(len(conn)-1) + ') =')
+      else:
+        f.write(neuron  + '(1) =')
+      #romIndexList.append(binascii.hexlify(struct.pack('>H', i)))
+      rawRomIndexList.append(i)
 
-for neuron in linkedNeurons:
-  conn = connectomeDict[neuron]
-  print('dim ', end="", flush=True)
-  print(neuron + '(' + str(len(conn)-1) + ') =', end="", flush=True)
-  #romIndexList.append(binascii.hexlify(struct.pack('>H', i)))
-  rawRomIndexList.append(i)
+      for connNeuron, weight in conn.items():
+        connIndex = indexDict[connNeuron]
 
-  for connNeuron, weight in conn.items():
-    connIndex = indexDict[connNeuron]
-
-    rawIndexList.append(connIndex)
-    rawNameList.append(connNeuron)
-    rawWeightList.append(weight)
-    rawUberNameList.append(neuron)
-    
-    indexWeight = weight * 512 + connIndex
-  #  print(weight)
-  #  print(connIndex)
-    print(hex(abs(indexWeight))+ ',', end="", flush=True) #this is WRONG because sign is necessary
-
-  print()
-
-print('dim neurons(' + str(len(linkedNeurons)-1) + ') = ', end="", flush=True)
-for neuron in linkedNeurons:
-  print('@' + neuron + ',', end="", flush=True)
-
-print(unlinkedNeurons)
+        rawIndexList.append(connIndex)
+        rawNameList.append(connNeuron)
+        rawWeightList.append(weight)
+        rawUberNameList.append(neuron)
+        
+        indexWeight = weight * 512 + connIndex
+      #  print(weight)
+      #  print(connIndex)
+        f.write(hex(abs(indexWeight))+ ',') #this is WRONG because sign is necessary
+      f.write("\n")
+      
+    f.write('dim neurons(' + str(len(linkedNeurons)-1) + ') = ')
+    for neuron in linkedNeurons:
+      f.write('#' + neuron + ',')
+    print("unlinked neurons:")
+    print(unlinkedNeurons)
