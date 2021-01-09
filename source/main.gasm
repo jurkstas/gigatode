@@ -45,6 +45,7 @@ textWorkArea                      EQU                               0x7fa0
 ; Labels
 _entryPoint_                      EQU                               0x0200
 _next_0x0278                      EQU                               0x0278
+_next_0x02a6                      EQU                               0x029e
 
 ; Global Variables
 _i                                EQU                               0x0030
@@ -654,6 +655,606 @@ _neurons_array                    EQU                               0xe0da
 _neurons_array                    DW                                0x0026 0x0022 0x003a 0x0028 0x0010 0x001c 0x0024 0x0020 0x0008 0x0008 0x001e 0x001a 0x0022 0x0024 0x0022 0x001a 0x0012 0x001a 0x0012 0x0010 0x001e 0x001e 0x000c 0x0018 0x000e 0x0006 0x000c 0x0026 0x0014 0x000c 0x0016 0x0012 0x0018 0x000e 0x0012 0x0014 0x0010 0x000c 0x000e 0x0012 0x0016 0x000a 0x000a 0x0020 0x0022 0x0014 0x0010 0x000a 0x0008 0x000c 0x0012 0x0010 0x0012 0x0066 0x0072 0x0054 0x0050 0x002e 0x0038 0x002a 0x0030 0x0022 0x001e 0x0026 0x0024 0x0020 0x0022 0x0018 0x0038 0x0026 0x0022 0x0022 0x0012 0x001a 0x0012 0x0018 0x0012 0x000e 0x0016 0x0010 0x0010 0x0016 0x0024 0x002a 0x001c 0x0020 0x0014 0x0024 0x001a 0x001e 0x0018 0x001e 0x000e 0x0010 0x0020 0x0028 0x0022 0x0028 0x001c 0x0012 0x0012 0x001a 0x001a 0x0016 0x0010 0x0012 0x0012 0x0014 0x004a 0x0016 0x0028 0x001a 0x001e 0x0024 0x0034 0x000a 0x000a 0x0006 0x0006 0x0006 0x0008 0x000a 0x000e 0x001a 0x0010 0x001c 0x0022 0x0010 0x0012 0x0010 0x0012 0x001a 0x001a 0x0016 0x0014 0x0014 0x0014 0x0008 0x000c 0x000e 0x0018 0x001a 0x0012 0x000c 0x0010 0x000c 0x0014 0x0014 0x0020 0x0020 0x0010 0x0016 0x001a 0x0018 0x000c 0x000a 0x0010 0x0010 0x0014 0x0012 0x000c 0x0016 0x0010 0x000e 0x0008 0x001a 0x0004 0x0004 0x0010 0x0044 0x004c 0x000c 0x000e 0x0010 0x002a 0x0030 0x0028 0x002c 0x000e 0x0022 0x0034 0x0020 0x000a 0x000a 0x001e 0x0024 0x0030 0x0030 0x001e 0x0014 0x001e 0x0012 0x001c 0x002e 0x0020 0x0032 0x0028 0x0032 0x0006 0x0006 0x001e 0x0030 0x001a 0x0024 0x0016 0x001a 0x0024 0x001a 0x0022 0x002c 0x0016 0x000c 0x0008 0x001a 0x0014 0x0006 0x0034 0x002a 0x000c 0x000e 0x000c 0x0010 0x0014 0x000c 0x0008 0x0006 0x0006 0x0014 0x001a 0x0004 0x0004 0x0004 0x0004 0x0004 0x0006 0x000a 0x0008 0x0018 0x001a 0x0016 0x0016 0x0024 0x001a 0x0020 0x001a 0x000c 0x0012 0x0010 0x0012 0x0014 0x001c 0x0012 0x0018 0x0010 0x0010 0x001a 0x0016 0x0010 0x000c 0x0014 0x002c 0x0016 0x001e 0x001a 0x0016 0x0014 0x001c 0x0024 0x0020 0x002a 0x0018 0x0018 0x002c 0x0018 0x0016 0x0014 0x001c 0x000c 0x001c 0x001e 0x001e 0x0020 0x002c 0x000e 0x0014 0x0004 0x001a 0x0012 0x000e 0x0010 0x0018 0x0014 0x0012 0x0010 0x0010 0x0016 0x000e 0x0008 0x000c 
 
 ; Strings
+_neuronNames$                     EQU                               0xd7b3
+_neuronNames$                     DW                                0xe0d4 0xe0ce 0xe0c8 0xe0c2 0xe0bc 0xe0b6 0xe0b0 0xe0aa 0xe0a4 0xe09e 0xe098 0xe092 0xe08c 0xe086 0xe080 0xe07a 0xe074 0xe06e 0xe068 0xe062 0xe05c 0xe056 0xe051 0xe04b 0xe045 0xe03f 0xe039 0xe034 0xe02f 0xe029 0xe023 0xe01e 0xe019 0xe014 0xe00f 0xe00a 0xe005 0xe000 0xdffb 0xdff5 0xdfef 0xdfe9 0xdfe3 0xdfdd 0xdfd7 0xdfd1 0xdfcb 0xdfc5 0xdfbf 0xdfb9 0xdfb3 0xdfad 0xdfa7 0xdfa1 0xdf9b 0xdf95 0xdf8f 0xdf89 0xdf83 0xdf7d 0xdf77 0xdf71 0xdf6b 0xdf66 0xdf60 0xdf5a 0xdf54 0xdf4e 0xdf48 0xdf42 0xdf3d 0xdf38 0xdf32 0xdf2c 0xdf26 0xdf20 0xdf1a 0xdf14 0xdf0e 0xdf08 0xdf02 0xdefa 0xdef3 0xdeec 0xdee5 0xdede 0xded9 0xded4 0xdecf 0xdeca 0xdec5 0xdec0 0xdebb 0xdeb6 0xdeb1 0xdeac 0xdea7 0xdea2 0xde9d 0xde98 0xde93 0xde8e 0xde89 0xde84 0xde7f 0xde7a 0xde75 0xde70 0xde6b 0xde66 0xde61 0xde5b 0xde55 0xde4f 0xde49 0xde44 0xde3f 0xde3a 0xde35 0xde31 0xde2d 0xde29 0xde25 0xde1e 0xde17 0xde11 0xde0b 0xde04 0xddf9 0xddf2 0xddeb 0xdde5 0xdddf 0xddd8 0xddd1 0xddcb 0xddc5 0xde00 0xddc0 0xddbb 0xddb6 0xddb1 0xddad 0xdda9 0xdda4 0xdd9f 0xdd99 0xdd93 0xdd8d 0xdd87 0xdd80 0xdd79 0xdd72 0xdd6b 0xdd66 0xdd61 0xdd5b 0xdd55 0xdd4f 0xdd49 0xdd43 0xdd3d 0xdd37 0xdd31 0xdd2b 0xdd25 0xdd1f 0xdd19 0xdd14 0xdd0e 0xdd08 0xdd02 0xdcfa 0xdcf5 0xdcef 0xdce9 0xdce3 0xdcdd 0xdcd7 0xdcd1 0xdccc 0xdcc7 0xdcc1 0xdcbb 0xdcb5 0xdcaf 0xdca9 0xdca3 0xdc9d 0xdc97 0xdc92 0xdc8c 0xdc86 0xdc80 0xdc7a 0xdc75 0xdc6f 0xdc69 0xdc63 0xdc5d 0xdc58 0xdc53 0xdc4d 0xdc47 0xdc40 0xdc39 0xdc33 0xdc2d 0xdc26 0xdc1f 0xdc19 0xdc13 0xdc0d 0xdc07 0xdc01 0xdbfa 0xdbf4 0xdbee 0xdbe8 0xdbe2 0xdbdb 0xdbd4 0xdbcd 0xdbc6 0xdbc0 0xdbb9 0xdbb2 0xdbac 0xdba6 0xdb9f 0xdb98 0xdb91 0xdb8a 0xdb83 0xdb7c 0xdb75 0xdb6e 0xdb67 0xdb60 0xdb59 0xdb52 0xdb4b 0xdb44 0xdb3d 0xdb36 0xdb2f 0xdb28 0xdb21 0xdb1a 0xdb14 0xdb0e 0xdb08 0xdb02 0xdaf9 0xdaf2 0xdaeb 0xdae4 0xdadf 0xdad9 0xdad3 0xdacd 0xdac8 0xdac3 0xdabe 0xdab9 0xdab4 0xdaaf 0xdaaa 0xdaa5 0xdaa0 0xda9a 0xda94 0xda8f 0xda8a 0xda85 0xda80 0xda7b 0xda76 0xda71 0xda6c 0xda67 0xda62 0xda5d 0xda58 0xda53 0xda4e 0xda49 0xda43 0xda3d 0xda37 0xda31 0xda2c 0xda27 0xda22 0xda1d 0xda18 0xda13 0xda0e 0xda09 
+_neuronNames$_0xe0d4              EQU                               0xe0d4
+_neuronNames$_0xe0d4              DB                                4 'ADAL' 0
+_neuronNames$_0xe0ce              EQU                               0xe0ce
+_neuronNames$_0xe0ce              DB                                4 'ADAR' 0
+_neuronNames$_0xe0c8              EQU                               0xe0c8
+_neuronNames$_0xe0c8              DB                                4 'ADEL' 0
+_neuronNames$_0xe0c2              EQU                               0xe0c2
+_neuronNames$_0xe0c2              DB                                4 'ADER' 0
+_neuronNames$_0xe0bc              EQU                               0xe0bc
+_neuronNames$_0xe0bc              DB                                4 'ADFL' 0
+_neuronNames$_0xe0b6              EQU                               0xe0b6
+_neuronNames$_0xe0b6              DB                                4 'ADFR' 0
+_neuronNames$_0xe0b0              EQU                               0xe0b0
+_neuronNames$_0xe0b0              DB                                4 'ADLL' 0
+_neuronNames$_0xe0aa              EQU                               0xe0aa
+_neuronNames$_0xe0aa              DB                                4 'ADLR' 0
+_neuronNames$_0xe0a4              EQU                               0xe0a4
+_neuronNames$_0xe0a4              DB                                4 'AFDL' 0
+_neuronNames$_0xe09e              EQU                               0xe09e
+_neuronNames$_0xe09e              DB                                4 'AFDR' 0
+_neuronNames$_0xe098              EQU                               0xe098
+_neuronNames$_0xe098              DB                                4 'AIAL' 0
+_neuronNames$_0xe092              EQU                               0xe092
+_neuronNames$_0xe092              DB                                4 'AIAR' 0
+_neuronNames$_0xe08c              EQU                               0xe08c
+_neuronNames$_0xe08c              DB                                4 'AIBL' 0
+_neuronNames$_0xe086              EQU                               0xe086
+_neuronNames$_0xe086              DB                                4 'AIBR' 0
+_neuronNames$_0xe080              EQU                               0xe080
+_neuronNames$_0xe080              DB                                4 'AIML' 0
+_neuronNames$_0xe07a              EQU                               0xe07a
+_neuronNames$_0xe07a              DB                                4 'AIMR' 0
+_neuronNames$_0xe074              EQU                               0xe074
+_neuronNames$_0xe074              DB                                4 'AINL' 0
+_neuronNames$_0xe06e              EQU                               0xe06e
+_neuronNames$_0xe06e              DB                                4 'AINR' 0
+_neuronNames$_0xe068              EQU                               0xe068
+_neuronNames$_0xe068              DB                                4 'AIYL' 0
+_neuronNames$_0xe062              EQU                               0xe062
+_neuronNames$_0xe062              DB                                4 'AIYR' 0
+_neuronNames$_0xe05c              EQU                               0xe05c
+_neuronNames$_0xe05c              DB                                4 'AIZL' 0
+_neuronNames$_0xe056              EQU                               0xe056
+_neuronNames$_0xe056              DB                                4 'AIZR' 0
+_neuronNames$_0xe051              EQU                               0xe051
+_neuronNames$_0xe051              DB                                3 'ALA' 0
+_neuronNames$_0xe04b              EQU                               0xe04b
+_neuronNames$_0xe04b              DB                                4 'ALML' 0
+_neuronNames$_0xe045              EQU                               0xe045
+_neuronNames$_0xe045              DB                                4 'ALMR' 0
+_neuronNames$_0xe03f              EQU                               0xe03f
+_neuronNames$_0xe03f              DB                                4 'ALNL' 0
+_neuronNames$_0xe039              EQU                               0xe039
+_neuronNames$_0xe039              DB                                4 'ALNR' 0
+_neuronNames$_0xe034              EQU                               0xe034
+_neuronNames$_0xe034              DB                                3 'AQR' 0
+_neuronNames$_0xe02f              EQU                               0xe02f
+_neuronNames$_0xe02f              DB                                3 'AS1' 0
+_neuronNames$_0xe029              EQU                               0xe029
+_neuronNames$_0xe029              DB                                4 'AS10' 0
+_neuronNames$_0xe023              EQU                               0xe023
+_neuronNames$_0xe023              DB                                4 'AS11' 0
+_neuronNames$_0xe01e              EQU                               0xe01e
+_neuronNames$_0xe01e              DB                                3 'AS2' 0
+_neuronNames$_0xe019              EQU                               0xe019
+_neuronNames$_0xe019              DB                                3 'AS3' 0
+_neuronNames$_0xe014              EQU                               0xe014
+_neuronNames$_0xe014              DB                                3 'AS4' 0
+_neuronNames$_0xe00f              EQU                               0xe00f
+_neuronNames$_0xe00f              DB                                3 'AS5' 0
+_neuronNames$_0xe00a              EQU                               0xe00a
+_neuronNames$_0xe00a              DB                                3 'AS6' 0
+_neuronNames$_0xe005              EQU                               0xe005
+_neuronNames$_0xe005              DB                                3 'AS7' 0
+_neuronNames$_0xe000              EQU                               0xe000
+_neuronNames$_0xe000              DB                                3 'AS8' 0
+_neuronNames$_0xdffb              EQU                               0xdffb
+_neuronNames$_0xdffb              DB                                3 'AS9' 0
+_neuronNames$_0xdff5              EQU                               0xdff5
+_neuronNames$_0xdff5              DB                                4 'ASEL' 0
+_neuronNames$_0xdfef              EQU                               0xdfef
+_neuronNames$_0xdfef              DB                                4 'ASER' 0
+_neuronNames$_0xdfe9              EQU                               0xdfe9
+_neuronNames$_0xdfe9              DB                                4 'ASGL' 0
+_neuronNames$_0xdfe3              EQU                               0xdfe3
+_neuronNames$_0xdfe3              DB                                4 'ASGR' 0
+_neuronNames$_0xdfdd              EQU                               0xdfdd
+_neuronNames$_0xdfdd              DB                                4 'ASHL' 0
+_neuronNames$_0xdfd7              EQU                               0xdfd7
+_neuronNames$_0xdfd7              DB                                4 'ASHR' 0
+_neuronNames$_0xdfd1              EQU                               0xdfd1
+_neuronNames$_0xdfd1              DB                                4 'ASIL' 0
+_neuronNames$_0xdfcb              EQU                               0xdfcb
+_neuronNames$_0xdfcb              DB                                4 'ASIR' 0
+_neuronNames$_0xdfc5              EQU                               0xdfc5
+_neuronNames$_0xdfc5              DB                                4 'ASJL' 0
+_neuronNames$_0xdfbf              EQU                               0xdfbf
+_neuronNames$_0xdfbf              DB                                4 'ASJR' 0
+_neuronNames$_0xdfb9              EQU                               0xdfb9
+_neuronNames$_0xdfb9              DB                                4 'ASKL' 0
+_neuronNames$_0xdfb3              EQU                               0xdfb3
+_neuronNames$_0xdfb3              DB                                4 'ASKR' 0
+_neuronNames$_0xdfad              EQU                               0xdfad
+_neuronNames$_0xdfad              DB                                4 'AUAL' 0
+_neuronNames$_0xdfa7              EQU                               0xdfa7
+_neuronNames$_0xdfa7              DB                                4 'AUAR' 0
+_neuronNames$_0xdfa1              EQU                               0xdfa1
+_neuronNames$_0xdfa1              DB                                4 'AVAL' 0
+_neuronNames$_0xdf9b              EQU                               0xdf9b
+_neuronNames$_0xdf9b              DB                                4 'AVAR' 0
+_neuronNames$_0xdf95              EQU                               0xdf95
+_neuronNames$_0xdf95              DB                                4 'AVBL' 0
+_neuronNames$_0xdf8f              EQU                               0xdf8f
+_neuronNames$_0xdf8f              DB                                4 'AVBR' 0
+_neuronNames$_0xdf89              EQU                               0xdf89
+_neuronNames$_0xdf89              DB                                4 'AVDL' 0
+_neuronNames$_0xdf83              EQU                               0xdf83
+_neuronNames$_0xdf83              DB                                4 'AVDR' 0
+_neuronNames$_0xdf7d              EQU                               0xdf7d
+_neuronNames$_0xdf7d              DB                                4 'AVEL' 0
+_neuronNames$_0xdf77              EQU                               0xdf77
+_neuronNames$_0xdf77              DB                                4 'AVER' 0
+_neuronNames$_0xdf71              EQU                               0xdf71
+_neuronNames$_0xdf71              DB                                4 'AVFL' 0
+_neuronNames$_0xdf6b              EQU                               0xdf6b
+_neuronNames$_0xdf6b              DB                                4 'AVFR' 0
+_neuronNames$_0xdf66              EQU                               0xdf66
+_neuronNames$_0xdf66              DB                                3 'AVG' 0
+_neuronNames$_0xdf60              EQU                               0xdf60
+_neuronNames$_0xdf60              DB                                4 'AVHL' 0
+_neuronNames$_0xdf5a              EQU                               0xdf5a
+_neuronNames$_0xdf5a              DB                                4 'AVHR' 0
+_neuronNames$_0xdf54              EQU                               0xdf54
+_neuronNames$_0xdf54              DB                                4 'AVJL' 0
+_neuronNames$_0xdf4e              EQU                               0xdf4e
+_neuronNames$_0xdf4e              DB                                4 'AVJR' 0
+_neuronNames$_0xdf48              EQU                               0xdf48
+_neuronNames$_0xdf48              DB                                4 'AVKL' 0
+_neuronNames$_0xdf42              EQU                               0xdf42
+_neuronNames$_0xdf42              DB                                4 'AVKR' 0
+_neuronNames$_0xdf3d              EQU                               0xdf3d
+_neuronNames$_0xdf3d              DB                                3 'AVL' 0
+_neuronNames$_0xdf38              EQU                               0xdf38
+_neuronNames$_0xdf38              DB                                3 'AVM' 0
+_neuronNames$_0xdf32              EQU                               0xdf32
+_neuronNames$_0xdf32              DB                                4 'AWAL' 0
+_neuronNames$_0xdf2c              EQU                               0xdf2c
+_neuronNames$_0xdf2c              DB                                4 'AWAR' 0
+_neuronNames$_0xdf26              EQU                               0xdf26
+_neuronNames$_0xdf26              DB                                4 'AWBL' 0
+_neuronNames$_0xdf20              EQU                               0xdf20
+_neuronNames$_0xdf20              DB                                4 'AWBR' 0
+_neuronNames$_0xdf1a              EQU                               0xdf1a
+_neuronNames$_0xdf1a              DB                                4 'AWCL' 0
+_neuronNames$_0xdf14              EQU                               0xdf14
+_neuronNames$_0xdf14              DB                                4 'AWCR' 0
+_neuronNames$_0xdf0e              EQU                               0xdf0e
+_neuronNames$_0xdf0e              DB                                4 'BAGL' 0
+_neuronNames$_0xdf08              EQU                               0xdf08
+_neuronNames$_0xdf08              DB                                4 'BAGR' 0
+_neuronNames$_0xdf02              EQU                               0xdf02
+_neuronNames$_0xdf02              DB                                4 'BDUL' 0
+_neuronNames$_0xdefa              EQU                               0xdefa
+_neuronNames$_0xdefa              DB                                4 'BDUR' 0
+_neuronNames$_0xdef3              EQU                               0xdef3
+_neuronNames$_0xdef3              DB                                5 'CEPDL' 0
+_neuronNames$_0xdeec              EQU                               0xdeec
+_neuronNames$_0xdeec              DB                                5 'CEPDR' 0
+_neuronNames$_0xdee5              EQU                               0xdee5
+_neuronNames$_0xdee5              DB                                5 'CEPVL' 0
+_neuronNames$_0xdede              EQU                               0xdede
+_neuronNames$_0xdede              DB                                5 'CEPVR' 0
+_neuronNames$_0xded9              EQU                               0xded9
+_neuronNames$_0xded9              DB                                3 'DA1' 0
+_neuronNames$_0xded4              EQU                               0xded4
+_neuronNames$_0xded4              DB                                3 'DA2' 0
+_neuronNames$_0xdecf              EQU                               0xdecf
+_neuronNames$_0xdecf              DB                                3 'DA3' 0
+_neuronNames$_0xdeca              EQU                               0xdeca
+_neuronNames$_0xdeca              DB                                3 'DA4' 0
+_neuronNames$_0xdec5              EQU                               0xdec5
+_neuronNames$_0xdec5              DB                                3 'DA5' 0
+_neuronNames$_0xdec0              EQU                               0xdec0
+_neuronNames$_0xdec0              DB                                3 'DA6' 0
+_neuronNames$_0xdebb              EQU                               0xdebb
+_neuronNames$_0xdebb              DB                                3 'DA7' 0
+_neuronNames$_0xdeb6              EQU                               0xdeb6
+_neuronNames$_0xdeb6              DB                                3 'DA8' 0
+_neuronNames$_0xdeb1              EQU                               0xdeb1
+_neuronNames$_0xdeb1              DB                                3 'DA9' 0
+_neuronNames$_0xdeac              EQU                               0xdeac
+_neuronNames$_0xdeac              DB                                3 'DB1' 0
+_neuronNames$_0xdea7              EQU                               0xdea7
+_neuronNames$_0xdea7              DB                                3 'DB2' 0
+_neuronNames$_0xdea2              EQU                               0xdea2
+_neuronNames$_0xdea2              DB                                3 'DB3' 0
+_neuronNames$_0xde9d              EQU                               0xde9d
+_neuronNames$_0xde9d              DB                                3 'DB4' 0
+_neuronNames$_0xde98              EQU                               0xde98
+_neuronNames$_0xde98              DB                                3 'DB5' 0
+_neuronNames$_0xde93              EQU                               0xde93
+_neuronNames$_0xde93              DB                                3 'DB6' 0
+_neuronNames$_0xde8e              EQU                               0xde8e
+_neuronNames$_0xde8e              DB                                3 'DB7' 0
+_neuronNames$_0xde89              EQU                               0xde89
+_neuronNames$_0xde89              DB                                3 'DD1' 0
+_neuronNames$_0xde84              EQU                               0xde84
+_neuronNames$_0xde84              DB                                3 'DD2' 0
+_neuronNames$_0xde7f              EQU                               0xde7f
+_neuronNames$_0xde7f              DB                                3 'DD3' 0
+_neuronNames$_0xde7a              EQU                               0xde7a
+_neuronNames$_0xde7a              DB                                3 'DD4' 0
+_neuronNames$_0xde75              EQU                               0xde75
+_neuronNames$_0xde75              DB                                3 'DD5' 0
+_neuronNames$_0xde70              EQU                               0xde70
+_neuronNames$_0xde70              DB                                3 'DD6' 0
+_neuronNames$_0xde6b              EQU                               0xde6b
+_neuronNames$_0xde6b              DB                                3 'DVA' 0
+_neuronNames$_0xde66              EQU                               0xde66
+_neuronNames$_0xde66              DB                                3 'DVB' 0
+_neuronNames$_0xde61              EQU                               0xde61
+_neuronNames$_0xde61              DB                                3 'DVC' 0
+_neuronNames$_0xde5b              EQU                               0xde5b
+_neuronNames$_0xde5b              DB                                4 'FLPL' 0
+_neuronNames$_0xde55              EQU                               0xde55
+_neuronNames$_0xde55              DB                                4 'FLPR' 0
+_neuronNames$_0xde4f              EQU                               0xde4f
+_neuronNames$_0xde4f              DB                                4 'HSNL' 0
+_neuronNames$_0xde49              EQU                               0xde49
+_neuronNames$_0xde49              DB                                4 'HSNR' 0
+_neuronNames$_0xde44              EQU                               0xde44
+_neuronNames$_0xde44              DB                                3 'I1L' 0
+_neuronNames$_0xde3f              EQU                               0xde3f
+_neuronNames$_0xde3f              DB                                3 'I1R' 0
+_neuronNames$_0xde3a              EQU                               0xde3a
+_neuronNames$_0xde3a              DB                                3 'I2L' 0
+_neuronNames$_0xde35              EQU                               0xde35
+_neuronNames$_0xde35              DB                                3 'I2R' 0
+_neuronNames$_0xde31              EQU                               0xde31
+_neuronNames$_0xde31              DB                                2 'I3' 0
+_neuronNames$_0xde2d              EQU                               0xde2d
+_neuronNames$_0xde2d              DB                                2 'I4' 0
+_neuronNames$_0xde29              EQU                               0xde29
+_neuronNames$_0xde29              DB                                2 'I5' 0
+_neuronNames$_0xde25              EQU                               0xde25
+_neuronNames$_0xde25              DB                                2 'I6' 0
+_neuronNames$_0xde1e              EQU                               0xde1e
+_neuronNames$_0xde1e              DB                                5 'IL1DL' 0
+_neuronNames$_0xde17              EQU                               0xde17
+_neuronNames$_0xde17              DB                                5 'IL1DR' 0
+_neuronNames$_0xde11              EQU                               0xde11
+_neuronNames$_0xde11              DB                                4 'IL1L' 0
+_neuronNames$_0xde0b              EQU                               0xde0b
+_neuronNames$_0xde0b              DB                                4 'IL1R' 0
+_neuronNames$_0xde04              EQU                               0xde04
+_neuronNames$_0xde04              DB                                5 'IL1VL' 0
+_neuronNames$_0xddf9              EQU                               0xddf9
+_neuronNames$_0xddf9              DB                                5 'IL1VR' 0
+_neuronNames$_0xddf2              EQU                               0xddf2
+_neuronNames$_0xddf2              DB                                5 'IL2DL' 0
+_neuronNames$_0xddeb              EQU                               0xddeb
+_neuronNames$_0xddeb              DB                                5 'IL2DR' 0
+_neuronNames$_0xdde5              EQU                               0xdde5
+_neuronNames$_0xdde5              DB                                4 'IL2L' 0
+_neuronNames$_0xdddf              EQU                               0xdddf
+_neuronNames$_0xdddf              DB                                4 'IL2R' 0
+_neuronNames$_0xddd8              EQU                               0xddd8
+_neuronNames$_0xddd8              DB                                5 'IL2VL' 0
+_neuronNames$_0xddd1              EQU                               0xddd1
+_neuronNames$_0xddd1              DB                                5 'IL2VR' 0
+_neuronNames$_0xddcb              EQU                               0xddcb
+_neuronNames$_0xddcb              DB                                4 'LUAL' 0
+_neuronNames$_0xddc5              EQU                               0xddc5
+_neuronNames$_0xddc5              DB                                4 'LUAR' 0
+_neuronNames$_0xde00              EQU                               0xde00
+_neuronNames$_0xde00              DB                                2 'M1' 0
+_neuronNames$_0xddc0              EQU                               0xddc0
+_neuronNames$_0xddc0              DB                                3 'M2L' 0
+_neuronNames$_0xddbb              EQU                               0xddbb
+_neuronNames$_0xddbb              DB                                3 'M2R' 0
+_neuronNames$_0xddb6              EQU                               0xddb6
+_neuronNames$_0xddb6              DB                                3 'M3L' 0
+_neuronNames$_0xddb1              EQU                               0xddb1
+_neuronNames$_0xddb1              DB                                3 'M3R' 0
+_neuronNames$_0xddad              EQU                               0xddad
+_neuronNames$_0xddad              DB                                2 'M4' 0
+_neuronNames$_0xdda9              EQU                               0xdda9
+_neuronNames$_0xdda9              DB                                2 'M5' 0
+_neuronNames$_0xdda4              EQU                               0xdda4
+_neuronNames$_0xdda4              DB                                3 'MCL' 0
+_neuronNames$_0xdd9f              EQU                               0xdd9f
+_neuronNames$_0xdd9f              DB                                3 'MCR' 0
+_neuronNames$_0xdd99              EQU                               0xdd99
+_neuronNames$_0xdd99              DB                                4 'NSML' 0
+_neuronNames$_0xdd93              EQU                               0xdd93
+_neuronNames$_0xdd93              DB                                4 'NSMR' 0
+_neuronNames$_0xdd8d              EQU                               0xdd8d
+_neuronNames$_0xdd8d              DB                                4 'OLLL' 0
+_neuronNames$_0xdd87              EQU                               0xdd87
+_neuronNames$_0xdd87              DB                                4 'OLLR' 0
+_neuronNames$_0xdd80              EQU                               0xdd80
+_neuronNames$_0xdd80              DB                                5 'OLQDL' 0
+_neuronNames$_0xdd79              EQU                               0xdd79
+_neuronNames$_0xdd79              DB                                5 'OLQDR' 0
+_neuronNames$_0xdd72              EQU                               0xdd72
+_neuronNames$_0xdd72              DB                                5 'OLQVL' 0
+_neuronNames$_0xdd6b              EQU                               0xdd6b
+_neuronNames$_0xdd6b              DB                                5 'OLQVR' 0
+_neuronNames$_0xdd66              EQU                               0xdd66
+_neuronNames$_0xdd66              DB                                3 'PDA' 0
+_neuronNames$_0xdd61              EQU                               0xdd61
+_neuronNames$_0xdd61              DB                                3 'PDB' 0
+_neuronNames$_0xdd5b              EQU                               0xdd5b
+_neuronNames$_0xdd5b              DB                                4 'PDEL' 0
+_neuronNames$_0xdd55              EQU                               0xdd55
+_neuronNames$_0xdd55              DB                                4 'PDER' 0
+_neuronNames$_0xdd4f              EQU                               0xdd4f
+_neuronNames$_0xdd4f              DB                                4 'PHAL' 0
+_neuronNames$_0xdd49              EQU                               0xdd49
+_neuronNames$_0xdd49              DB                                4 'PHAR' 0
+_neuronNames$_0xdd43              EQU                               0xdd43
+_neuronNames$_0xdd43              DB                                4 'PHBL' 0
+_neuronNames$_0xdd3d              EQU                               0xdd3d
+_neuronNames$_0xdd3d              DB                                4 'PHBR' 0
+_neuronNames$_0xdd37              EQU                               0xdd37
+_neuronNames$_0xdd37              DB                                4 'PHCL' 0
+_neuronNames$_0xdd31              EQU                               0xdd31
+_neuronNames$_0xdd31              DB                                4 'PHCR' 0
+_neuronNames$_0xdd2b              EQU                               0xdd2b
+_neuronNames$_0xdd2b              DB                                4 'PLML' 0
+_neuronNames$_0xdd25              EQU                               0xdd25
+_neuronNames$_0xdd25              DB                                4 'PLMR' 0
+_neuronNames$_0xdd1f              EQU                               0xdd1f
+_neuronNames$_0xdd1f              DB                                4 'PLNL' 0
+_neuronNames$_0xdd19              EQU                               0xdd19
+_neuronNames$_0xdd19              DB                                4 'PLNR' 0
+_neuronNames$_0xdd14              EQU                               0xdd14
+_neuronNames$_0xdd14              DB                                3 'PQR' 0
+_neuronNames$_0xdd0e              EQU                               0xdd0e
+_neuronNames$_0xdd0e              DB                                4 'PVCL' 0
+_neuronNames$_0xdd08              EQU                               0xdd08
+_neuronNames$_0xdd08              DB                                4 'PVCR' 0
+_neuronNames$_0xdd02              EQU                               0xdd02
+_neuronNames$_0xdd02              DB                                4 'PVDL' 0
+_neuronNames$_0xdcfa              EQU                               0xdcfa
+_neuronNames$_0xdcfa              DB                                4 'PVDR' 0
+_neuronNames$_0xdcf5              EQU                               0xdcf5
+_neuronNames$_0xdcf5              DB                                3 'PVM' 0
+_neuronNames$_0xdcef              EQU                               0xdcef
+_neuronNames$_0xdcef              DB                                4 'PVNL' 0
+_neuronNames$_0xdce9              EQU                               0xdce9
+_neuronNames$_0xdce9              DB                                4 'PVNR' 0
+_neuronNames$_0xdce3              EQU                               0xdce3
+_neuronNames$_0xdce3              DB                                4 'PVPL' 0
+_neuronNames$_0xdcdd              EQU                               0xdcdd
+_neuronNames$_0xdcdd              DB                                4 'PVPR' 0
+_neuronNames$_0xdcd7              EQU                               0xdcd7
+_neuronNames$_0xdcd7              DB                                4 'PVQL' 0
+_neuronNames$_0xdcd1              EQU                               0xdcd1
+_neuronNames$_0xdcd1              DB                                4 'PVQR' 0
+_neuronNames$_0xdccc              EQU                               0xdccc
+_neuronNames$_0xdccc              DB                                3 'PVR' 0
+_neuronNames$_0xdcc7              EQU                               0xdcc7
+_neuronNames$_0xdcc7              DB                                3 'PVT' 0
+_neuronNames$_0xdcc1              EQU                               0xdcc1
+_neuronNames$_0xdcc1              DB                                4 'PVWL' 0
+_neuronNames$_0xdcbb              EQU                               0xdcbb
+_neuronNames$_0xdcbb              DB                                4 'PVWR' 0
+_neuronNames$_0xdcb5              EQU                               0xdcb5
+_neuronNames$_0xdcb5              DB                                4 'RIAL' 0
+_neuronNames$_0xdcaf              EQU                               0xdcaf
+_neuronNames$_0xdcaf              DB                                4 'RIAR' 0
+_neuronNames$_0xdca9              EQU                               0xdca9
+_neuronNames$_0xdca9              DB                                4 'RIBL' 0
+_neuronNames$_0xdca3              EQU                               0xdca3
+_neuronNames$_0xdca3              DB                                4 'RIBR' 0
+_neuronNames$_0xdc9d              EQU                               0xdc9d
+_neuronNames$_0xdc9d              DB                                4 'RICL' 0
+_neuronNames$_0xdc97              EQU                               0xdc97
+_neuronNames$_0xdc97              DB                                4 'RICR' 0
+_neuronNames$_0xdc92              EQU                               0xdc92
+_neuronNames$_0xdc92              DB                                3 'RID' 0
+_neuronNames$_0xdc8c              EQU                               0xdc8c
+_neuronNames$_0xdc8c              DB                                4 'RIFL' 0
+_neuronNames$_0xdc86              EQU                               0xdc86
+_neuronNames$_0xdc86              DB                                4 'RIFR' 0
+_neuronNames$_0xdc80              EQU                               0xdc80
+_neuronNames$_0xdc80              DB                                4 'RIGL' 0
+_neuronNames$_0xdc7a              EQU                               0xdc7a
+_neuronNames$_0xdc7a              DB                                4 'RIGR' 0
+_neuronNames$_0xdc75              EQU                               0xdc75
+_neuronNames$_0xdc75              DB                                3 'RIH' 0
+_neuronNames$_0xdc6f              EQU                               0xdc6f
+_neuronNames$_0xdc6f              DB                                4 'RIML' 0
+_neuronNames$_0xdc69              EQU                               0xdc69
+_neuronNames$_0xdc69              DB                                4 'RIMR' 0
+_neuronNames$_0xdc63              EQU                               0xdc63
+_neuronNames$_0xdc63              DB                                4 'RIPL' 0
+_neuronNames$_0xdc5d              EQU                               0xdc5d
+_neuronNames$_0xdc5d              DB                                4 'RIPR' 0
+_neuronNames$_0xdc58              EQU                               0xdc58
+_neuronNames$_0xdc58              DB                                3 'RIR' 0
+_neuronNames$_0xdc53              EQU                               0xdc53
+_neuronNames$_0xdc53              DB                                3 'RIS' 0
+_neuronNames$_0xdc4d              EQU                               0xdc4d
+_neuronNames$_0xdc4d              DB                                4 'RIVL' 0
+_neuronNames$_0xdc47              EQU                               0xdc47
+_neuronNames$_0xdc47              DB                                4 'RIVR' 0
+_neuronNames$_0xdc40              EQU                               0xdc40
+_neuronNames$_0xdc40              DB                                5 'RMDDL' 0
+_neuronNames$_0xdc39              EQU                               0xdc39
+_neuronNames$_0xdc39              DB                                5 'RMDDR' 0
+_neuronNames$_0xdc33              EQU                               0xdc33
+_neuronNames$_0xdc33              DB                                4 'RMDL' 0
+_neuronNames$_0xdc2d              EQU                               0xdc2d
+_neuronNames$_0xdc2d              DB                                4 'RMDR' 0
+_neuronNames$_0xdc26              EQU                               0xdc26
+_neuronNames$_0xdc26              DB                                5 'RMDVL' 0
+_neuronNames$_0xdc1f              EQU                               0xdc1f
+_neuronNames$_0xdc1f              DB                                5 'RMDVR' 0
+_neuronNames$_0xdc19              EQU                               0xdc19
+_neuronNames$_0xdc19              DB                                4 'RMED' 0
+_neuronNames$_0xdc13              EQU                               0xdc13
+_neuronNames$_0xdc13              DB                                4 'RMEL' 0
+_neuronNames$_0xdc0d              EQU                               0xdc0d
+_neuronNames$_0xdc0d              DB                                4 'RMER' 0
+_neuronNames$_0xdc07              EQU                               0xdc07
+_neuronNames$_0xdc07              DB                                4 'RMEV' 0
+_neuronNames$_0xdc01              EQU                               0xdc01
+_neuronNames$_0xdc01              DB                                4 'RMFL' 0
+_neuronNames$_0xdbfa              EQU                               0xdbfa
+_neuronNames$_0xdbfa              DB                                4 'RMFR' 0
+_neuronNames$_0xdbf4              EQU                               0xdbf4
+_neuronNames$_0xdbf4              DB                                4 'RMGL' 0
+_neuronNames$_0xdbee              EQU                               0xdbee
+_neuronNames$_0xdbee              DB                                4 'RMGR' 0
+_neuronNames$_0xdbe8              EQU                               0xdbe8
+_neuronNames$_0xdbe8              DB                                4 'RMHL' 0
+_neuronNames$_0xdbe2              EQU                               0xdbe2
+_neuronNames$_0xdbe2              DB                                4 'RMHR' 0
+_neuronNames$_0xdbdb              EQU                               0xdbdb
+_neuronNames$_0xdbdb              DB                                5 'SAADL' 0
+_neuronNames$_0xdbd4              EQU                               0xdbd4
+_neuronNames$_0xdbd4              DB                                5 'SAADR' 0
+_neuronNames$_0xdbcd              EQU                               0xdbcd
+_neuronNames$_0xdbcd              DB                                5 'SAAVL' 0
+_neuronNames$_0xdbc6              EQU                               0xdbc6
+_neuronNames$_0xdbc6              DB                                5 'SAAVR' 0
+_neuronNames$_0xdbc0              EQU                               0xdbc0
+_neuronNames$_0xdbc0              DB                                4 'SABD' 0
+_neuronNames$_0xdbb9              EQU                               0xdbb9
+_neuronNames$_0xdbb9              DB                                5 'SABVL' 0
+_neuronNames$_0xdbb2              EQU                               0xdbb2
+_neuronNames$_0xdbb2              DB                                5 'SABVR' 0
+_neuronNames$_0xdbac              EQU                               0xdbac
+_neuronNames$_0xdbac              DB                                4 'SDQL' 0
+_neuronNames$_0xdba6              EQU                               0xdba6
+_neuronNames$_0xdba6              DB                                4 'SDQR' 0
+_neuronNames$_0xdb9f              EQU                               0xdb9f
+_neuronNames$_0xdb9f              DB                                5 'SIADL' 0
+_neuronNames$_0xdb98              EQU                               0xdb98
+_neuronNames$_0xdb98              DB                                5 'SIADR' 0
+_neuronNames$_0xdb91              EQU                               0xdb91
+_neuronNames$_0xdb91              DB                                5 'SIAVL' 0
+_neuronNames$_0xdb8a              EQU                               0xdb8a
+_neuronNames$_0xdb8a              DB                                5 'SIAVR' 0
+_neuronNames$_0xdb83              EQU                               0xdb83
+_neuronNames$_0xdb83              DB                                5 'SIBDL' 0
+_neuronNames$_0xdb7c              EQU                               0xdb7c
+_neuronNames$_0xdb7c              DB                                5 'SIBDR' 0
+_neuronNames$_0xdb75              EQU                               0xdb75
+_neuronNames$_0xdb75              DB                                5 'SIBVL' 0
+_neuronNames$_0xdb6e              EQU                               0xdb6e
+_neuronNames$_0xdb6e              DB                                5 'SIBVR' 0
+_neuronNames$_0xdb67              EQU                               0xdb67
+_neuronNames$_0xdb67              DB                                5 'SMBDL' 0
+_neuronNames$_0xdb60              EQU                               0xdb60
+_neuronNames$_0xdb60              DB                                5 'SMBDR' 0
+_neuronNames$_0xdb59              EQU                               0xdb59
+_neuronNames$_0xdb59              DB                                5 'SMBVL' 0
+_neuronNames$_0xdb52              EQU                               0xdb52
+_neuronNames$_0xdb52              DB                                5 'SMBVR' 0
+_neuronNames$_0xdb4b              EQU                               0xdb4b
+_neuronNames$_0xdb4b              DB                                5 'SMDDL' 0
+_neuronNames$_0xdb44              EQU                               0xdb44
+_neuronNames$_0xdb44              DB                                5 'SMDDR' 0
+_neuronNames$_0xdb3d              EQU                               0xdb3d
+_neuronNames$_0xdb3d              DB                                5 'SMDVL' 0
+_neuronNames$_0xdb36              EQU                               0xdb36
+_neuronNames$_0xdb36              DB                                5 'SMDVR' 0
+_neuronNames$_0xdb2f              EQU                               0xdb2f
+_neuronNames$_0xdb2f              DB                                5 'URADL' 0
+_neuronNames$_0xdb28              EQU                               0xdb28
+_neuronNames$_0xdb28              DB                                5 'URADR' 0
+_neuronNames$_0xdb21              EQU                               0xdb21
+_neuronNames$_0xdb21              DB                                5 'URAVL' 0
+_neuronNames$_0xdb1a              EQU                               0xdb1a
+_neuronNames$_0xdb1a              DB                                5 'URAVR' 0
+_neuronNames$_0xdb14              EQU                               0xdb14
+_neuronNames$_0xdb14              DB                                4 'URBL' 0
+_neuronNames$_0xdb0e              EQU                               0xdb0e
+_neuronNames$_0xdb0e              DB                                4 'URBR' 0
+_neuronNames$_0xdb08              EQU                               0xdb08
+_neuronNames$_0xdb08              DB                                4 'URXL' 0
+_neuronNames$_0xdb02              EQU                               0xdb02
+_neuronNames$_0xdb02              DB                                4 'URXR' 0
+_neuronNames$_0xdaf9              EQU                               0xdaf9
+_neuronNames$_0xdaf9              DB                                5 'URYDL' 0
+_neuronNames$_0xdaf2              EQU                               0xdaf2
+_neuronNames$_0xdaf2              DB                                5 'URYDR' 0
+_neuronNames$_0xdaeb              EQU                               0xdaeb
+_neuronNames$_0xdaeb              DB                                5 'URYVL' 0
+_neuronNames$_0xdae4              EQU                               0xdae4
+_neuronNames$_0xdae4              DB                                5 'URYVR' 0
+_neuronNames$_0xdadf              EQU                               0xdadf
+_neuronNames$_0xdadf              DB                                3 'VA1' 0
+_neuronNames$_0xdad9              EQU                               0xdad9
+_neuronNames$_0xdad9              DB                                4 'VA10' 0
+_neuronNames$_0xdad3              EQU                               0xdad3
+_neuronNames$_0xdad3              DB                                4 'VA11' 0
+_neuronNames$_0xdacd              EQU                               0xdacd
+_neuronNames$_0xdacd              DB                                4 'VA12' 0
+_neuronNames$_0xdac8              EQU                               0xdac8
+_neuronNames$_0xdac8              DB                                3 'VA2' 0
+_neuronNames$_0xdac3              EQU                               0xdac3
+_neuronNames$_0xdac3              DB                                3 'VA3' 0
+_neuronNames$_0xdabe              EQU                               0xdabe
+_neuronNames$_0xdabe              DB                                3 'VA4' 0
+_neuronNames$_0xdab9              EQU                               0xdab9
+_neuronNames$_0xdab9              DB                                3 'VA5' 0
+_neuronNames$_0xdab4              EQU                               0xdab4
+_neuronNames$_0xdab4              DB                                3 'VA6' 0
+_neuronNames$_0xdaaf              EQU                               0xdaaf
+_neuronNames$_0xdaaf              DB                                3 'VA7' 0
+_neuronNames$_0xdaaa              EQU                               0xdaaa
+_neuronNames$_0xdaaa              DB                                3 'VA8' 0
+_neuronNames$_0xdaa5              EQU                               0xdaa5
+_neuronNames$_0xdaa5              DB                                3 'VA9' 0
+_neuronNames$_0xdaa0              EQU                               0xdaa0
+_neuronNames$_0xdaa0              DB                                3 'VB1' 0
+_neuronNames$_0xda9a              EQU                               0xda9a
+_neuronNames$_0xda9a              DB                                4 'VB10' 0
+_neuronNames$_0xda94              EQU                               0xda94
+_neuronNames$_0xda94              DB                                4 'VB11' 0
+_neuronNames$_0xda8f              EQU                               0xda8f
+_neuronNames$_0xda8f              DB                                3 'VB2' 0
+_neuronNames$_0xda8a              EQU                               0xda8a
+_neuronNames$_0xda8a              DB                                3 'VB3' 0
+_neuronNames$_0xda85              EQU                               0xda85
+_neuronNames$_0xda85              DB                                3 'VB4' 0
+_neuronNames$_0xda80              EQU                               0xda80
+_neuronNames$_0xda80              DB                                3 'VB5' 0
+_neuronNames$_0xda7b              EQU                               0xda7b
+_neuronNames$_0xda7b              DB                                3 'VB6' 0
+_neuronNames$_0xda76              EQU                               0xda76
+_neuronNames$_0xda76              DB                                3 'VB7' 0
+_neuronNames$_0xda71              EQU                               0xda71
+_neuronNames$_0xda71              DB                                3 'VB8' 0
+_neuronNames$_0xda6c              EQU                               0xda6c
+_neuronNames$_0xda6c              DB                                3 'VB9' 0
+_neuronNames$_0xda67              EQU                               0xda67
+_neuronNames$_0xda67              DB                                3 'VC1' 0
+_neuronNames$_0xda62              EQU                               0xda62
+_neuronNames$_0xda62              DB                                3 'VC2' 0
+_neuronNames$_0xda5d              EQU                               0xda5d
+_neuronNames$_0xda5d              DB                                3 'VC3' 0
+_neuronNames$_0xda58              EQU                               0xda58
+_neuronNames$_0xda58              DB                                3 'VC4' 0
+_neuronNames$_0xda53              EQU                               0xda53
+_neuronNames$_0xda53              DB                                3 'VC5' 0
+_neuronNames$_0xda4e              EQU                               0xda4e
+_neuronNames$_0xda4e              DB                                3 'VC6' 0
+_neuronNames$_0xda49              EQU                               0xda49
+_neuronNames$_0xda49              DB                                3 'VD1' 0
+_neuronNames$_0xda43              EQU                               0xda43
+_neuronNames$_0xda43              DB                                4 'VD10' 0
+_neuronNames$_0xda3d              EQU                               0xda3d
+_neuronNames$_0xda3d              DB                                4 'VD11' 0
+_neuronNames$_0xda37              EQU                               0xda37
+_neuronNames$_0xda37              DB                                4 'VD12' 0
+_neuronNames$_0xda31              EQU                               0xda31
+_neuronNames$_0xda31              DB                                4 'VD13' 0
+_neuronNames$_0xda2c              EQU                               0xda2c
+_neuronNames$_0xda2c              DB                                3 'VD2' 0
+_neuronNames$_0xda27              EQU                               0xda27
+_neuronNames$_0xda27              DB                                3 'VD3' 0
+_neuronNames$_0xda22              EQU                               0xda22
+_neuronNames$_0xda22              DB                                3 'VD4' 0
+_neuronNames$_0xda1d              EQU                               0xda1d
+_neuronNames$_0xda1d              DB                                3 'VD5' 0
+_neuronNames$_0xda18              EQU                               0xda18
+_neuronNames$_0xda18              DB                                3 'VD6' 0
+_neuronNames$_0xda13              EQU                               0xda13
+_neuronNames$_0xda13              DB                                3 'VD7' 0
+_neuronNames$_0xda0e              EQU                               0xda0e
+_neuronNames$_0xda0e              DB                                3 'VD8' 0
+_neuronNames$_0xda09              EQU                               0xda09
+_neuronNames$_0xda09              DB                                3 'VD9' 0
 
 ; Constant Strings
 _str_0x7df3                       EQU                               0x7df3
@@ -719,6 +1320,18 @@ _next_0x0278                      LDWI                              0xe330
                                   NewLine                                                       ; Main: print(VD9(i))
 
                                   ForNextFarInc                     _i _next_0x0278 5           ; Main: next i
+
+                                  LDI                               0
+                                  STW                               _i                          ; Main: for i=0 to 5
+
+_next_0x02a6                      LDWI                              0xd7b3
+                                  ADDW                              _i
+                                  ADDW                              _i
+                                  DEEK                              
+                                  PrintAcString                     
+                                  NewLine                                                       ; Main: print(neuronNames$(i))
+
+                                  ForNextFarInc                     _i _next_0x02a6 5           ; Main: next i
 
                                   HALT                                                          ; Main: END
 

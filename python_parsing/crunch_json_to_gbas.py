@@ -67,5 +67,12 @@ with open('source/alltheneurons.gbas', 'w') as f:
     f.write('dim neurons(' + str(len(linkedNeurons)-1) + ') = ')
     for neuron in linkedNeurons:
       f.write('#' + neuron + ',')
+    f.write('\n')
+    
+    f.write('const dim neuronNames$(' + str(len(linkedNeurons)-1) + ') = ')
+    for neuron in linkedNeurons:
+      f.write('"' + neuron + '",')
+    f.write('\n')
+    
     print("unlinked neurons:")
     print(unlinkedNeurons)

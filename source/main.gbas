@@ -16,3 +16,6 @@ print("VD9")
 for i=0 to (#VD9)/2-1
   print(VD9(i))
 next i
+for i=0 to 5
+  print(neuronNames$(i))
+next i
