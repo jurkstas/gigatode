@@ -44,11 +44,18 @@ textWorkArea                      EQU                               0x7fa0
 
 ; Labels
 _entryPoint_                      EQU                               0x0200
-_next_0x0278                      EQU                               0x0278
-_next_0x02a6                      EQU                               0x029e
+_loop                             EQU                               0x02bb
+_showNeuron                       EQU                               0x02c2
+_markNeuron                       EQU                               0x030f
+_next_0x0236                      EQU                               0x0236
+_next_0x02a3                      EQU                               0x028b
+_page_0x0300                      EQU                               0x0300
+_page_0x0400                      EQU                               0x0400
 
 ; Global Variables
 _i                                EQU                               0x0030
+_neuronvar                        EQU                               0x0032
+_neuroncolor                      EQU                               0x0034
 
 ; Local Variables
 
@@ -1257,12 +1264,6 @@ _neuronNames$_0xda09              EQU                               0xda09
 _neuronNames$_0xda09              DB                                3 'VD9' 0
 
 ; Constant Strings
-_str_0x7df3                       EQU                               0x7df3
-_str_0x7df3                       DB                                11 'hello world' 0
-_str_0x7dea                       EQU                               0x7dea
-_str_0x7dea                       DB                                7 'lengths' 0
-_str_0x7de5                       EQU                               0x7de5
-_str_0x7de5                       DB                                3 'VD9' 0
 
 ; Data
 
@@ -1294,44 +1295,332 @@ _entryPoint_                      LDI                               0x28
 
                                   ClearVertBlinds                                               ; Main: cls
 
-                                  PrintString                       _str_0x7df3
-                                  NewLine                                                       ; Main: print("hello world")
+                                  LDI                               2
+                                  STW                               _i
+                                  LDWI                              298
+                                  STW                               0xb0
+                                  LDI                               1
+                                  STW                               0xb2                        ; Main: for i = 2 to 298
 
-                                  PrintString                       _str_0x7dea
-                                  NewLine                                                       ; Main: print("lengths")
+_next_0x0236                      LDW                               _i
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy
+                                  LDW                               _i
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy + 1
+                                  LDI                               63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (i AND 31) * 2 + 30, (i / 32) * 2 + 30, &h3F
 
-                                  PrintInt16                        0x0256
-                                  NewLine                                                       ; Main: print(#neurons)
-
-                                  PrintInt16                        0x000c
-                                  NewLine                                                       ; Main: print(#VD9)
-
-                                  PrintString                       _str_0x7de5
-                                  NewLine                                                       ; Main: print("VD9")
+                                  ForNextFarVarAdd                  _i _next_0x0236 0xb0 0xb2   ; Main: next i
 
                                   LDI                               0
-                                  STW                               _i                          ; Main: for i=0 to (#VD9)/2-1
+                                  STW                               _i
+                                  LDWI                              298
+                                  STW                               0xb0
+                                  LDI                               1
+                                  STW                               0xb2                        ; Main: for i = 0 to 298
 
-_next_0x0278                      LDWI                              0xe330
-                                  ADDW                              _i
-                                  ADDW                              _i
+_next_0x02a3                      LDW                               _i
+                                  STW                               _neuronvar                  ; Main: neuronvar = i
+
+                                  LDWI                              0xe0da
+                                  ADDW                              _neuronvar
+                                  ADDW                              _neuronvar
                                   DEEK                              
-                                  PrintAcInt16                      
-                                  NewLine                                                       ; Main: print(VD9(i))
+                                  STW                               _neuroncolor                ; Main: neuroncolor = neurons(neuronvar)
 
-                                  ForNextFarInc                     _i _next_0x0278 5           ; Main: next i
+                                  LDWI                              _showNeuron
+                                  CALL                              giga_vAC                    ; Main: gosub showNeuron
 
-                                  LDI                               0
-                                  STW                               _i                          ; Main: for i=0 to 5
+                                  ForNextFarVarAdd                  _i _next_0x02a3 0xb0 0xb2   ; Main: next i
 
-_next_0x02a6                      LDWI                              0xd7b3
-                                  ADDW                              _i
-                                  ADDW                              _i
-                                  DEEK                              
-                                  PrintAcString                     
-                                  NewLine                                                       ; Main: print(neuronNames$(i))
+                                  LDI                               100
+                                  STW                               _neuronvar                  ; Main: neuronvar = 100
 
-                                  ForNextFarInc                     _i _next_0x02a6 5           ; Main: next i
+                                  LDI                               255
+                                  STW                               _neuroncolor                ; Main: neuroncolor = 0xFF
+
+                                  LDWI                              _markNeuron
+                                  CALL                              giga_vAC                    ; Main: gosub markNeuron
+
+_loop                             LDWI                              _loop
+                                  CALL                              giga_vAC                    ; Main: goto loop
+
+                                  HALT                                                          ; Main: end
+
+_showNeuron                       PUSH                              
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy + 1
+                                  STLW                              0xFE
+                                  LDWI                              _page_0x0300
+                                  CALL                              giga_vAC
+_page_0x0300                      LDLW                              0xFE
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 30, (neuronvar / 32) * 2 + 30, neuroncolor AND &h3F
+
+                                  Return                                                        ; Main: return
+
+_markNeuron                       PUSH                              
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              29
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              29
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 29, (neuronvar / 32) * 2 + 29, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              29
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 30, (neuronvar / 32) * 2 + 29, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              31
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              29
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 31, (neuronvar / 32) * 2 + 29, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              29
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  STLW                              0xFE
+                                  LDWI                              _page_0x0400
+                                  CALL                              giga_vAC
+_page_0x0400                      LDLW                              0xFE
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 29, (neuronvar / 32) * 2 + 30, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              31
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 31, (neuronvar / 32) * 2 + 30, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              29
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              31
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 29, (neuronvar / 32) * 2 + 31, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              30
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              31
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 30, (neuronvar / 32) * 2 + 31, neuroncolor AND &h3F
+
+                                  LDW                               _neuronvar
+                                  ANDI                              31
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              31
+                                  ST                                drawPixel_xy
+                                  LDW                               _neuronvar
+                                  STW                               mathX
+                                  LDI                               32
+                                  STW                               mathY
+                                  LDWI                              divide16bit
+                                  CALL                              giga_vAC
+                                  STW                               mathX
+                                  LDI                               2
+                                  STW                               mathY
+                                  LDWI                              multiply16bit
+                                  CALL                              giga_vAC
+                                  ADDI                              31
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 2 + 31, (neuronvar / 32) * 2 + 31, neuroncolor AND &h3F
+
+                                  Return                                                        ; Main: return
 
                                   HALT                                                          ; Main: END
 
@@ -1343,18 +1632,14 @@ _next_0x02a6                      LDWI                              0xd7b3
 ;****************************************************************************************************************************************
 ;****************************************************************************************************************************************
 
-romCheck                          EQU     0x78cf
-scanlineMode                      EQU     0x7aa4
-resetVideoFlags                   EQU     0x7da3
-initClearFuncs                    EQU     0x78a8
-clearVertBlinds                   EQU     0x7daf
-clearCursorRow                    EQU     0x79cf
-printInit                         EQU     0x78b9
-printText                         EQU     0x78e6
-printDigit                        EQU     0x79ad
-printInt16                        EQU     0x7aae
-printChar                         EQU     0x7ba7
-newLineScroll                     EQU     0x7ca2
+romCheck                          EQU     0x7cb2
+multiply16bit                     EQU     0x7bcb
+divide16bit                       EQU     0x7da8
+scanlineMode                      EQU     0x7ba8
+resetVideoFlags                   EQU     0x7bb2
+initClearFuncs                    EQU     0x7ca1
+clearVertBlinds                   EQU     0x7cc9
+drawPixel                         EQU     0x7bbe
 convertEqOpAddr                   EQU     0x00c0
 convertNeOpAddr                   EQU     0x00c2
 convertLeOpAddr                   EQU     0x00c4
@@ -1396,6 +1681,110 @@ romC_loop           LD      romErrPixel
                     BRA     romC_loop                       ; flash left hand corner pixel indicating rom error
                     
 romC_return         RET                    
+
+
+; do *NOT* use register4 to register7 during time slicing
+mathX               EQU     register8
+mathY               EQU     register9
+mathSum             EQU     register12
+mathRem             EQU     register12
+mathMask            EQU     register13
+mathSign            EQU     register14
+mathQuot            EQU     register15
+mathShift           EQU     register15
+mathBase            EQU     register10
+mathPow             EQU     register11
+mathResult          EQU     register14
+
+
+                    ; accumulator = mathX * mathY, (result 16bit)
+multiply16bit       LDI     0
+                    STW     mathSum
+                    LDW     mathX
+                    BEQ     multiply16_exit     ; if x=0 then return 0
+                    LDWI    SYS_LSRW1_48
+                    STW     giga_sysFn
+                    LDW     mathY
+                    
+multiply16_loop     BEQ     multiply16_exit     ; if y=0 then return
+                    ANDI    1
+                    BEQ     multiply16_skip
+                    LDW     mathSum
+                    ADDW    mathX
+                    STW     mathSum             ; mathSum += mathX
+                    
+multiply16_skip     LDW     mathX
+                    LSLW
+                    STW     mathX               ; mathX = mathX <<1
+                    LDW     mathY
+                    SYS     48
+                    STW     mathY               ; mathY = mathY >>1
+                    BRA     multiply16_loop
+
+%if TIME_SLICING
+multiply16_exit     PUSH
+                    CALL    realTimeStubAddr
+                    POP
+                    LDW     mathSum
+%else
+multiply16_exit     LDW     mathSum
+%endif
+                    RET
+
+
+                    ; accumulator:mathRem = mathX / mathY, (results 16bit)
+divide16bit         LDW     mathX
+                    XORW    mathY
+                    STW     mathSign
+                    LDW     mathX
+                    BGE     divide16_pos0
+                    LDI     0
+                    SUBW    mathX
+                    STW     mathX
+                    
+divide16_pos0       LDW     mathY                     
+                    BGE     divide16_pos1
+                    LDI     0
+                    SUBW    mathY
+                    STW     mathY
+                    
+divide16_pos1       LDI     0
+                    STW     mathRem
+                    LDI     1
+    
+divide16_loop       STW     mathMask
+                    LDW     mathRem
+                    LSLW
+                    STW     mathRem
+                    LDW     mathX
+                    BGE     divide16_incr
+                    INC     mathRem
+                    
+divide16_incr       LDW     mathX
+                    LSLW
+                    STW     mathX
+                    LDW     mathRem
+                    SUBW    mathY
+                    BLT     divide16_incx
+                    STW     mathRem
+                    INC     mathX
+                    
+divide16_incx       LDW     mathMask
+                    LSLW
+                    BNE     divide16_loop
+%if TIME_SLICING
+                    PUSH
+                    CALL    realTimeStubAddr
+                    POP
+%endif
+                    LDW     mathSign
+                    BGE     divide16_exit
+                    LDI     0
+                    SUBW    mathX
+                    RET
+                    
+divide16_exit       LDW     mathX
+                    RET
 
 
 ; do *NOT* use register4 to register7 during time slicing
@@ -1553,259 +1942,12 @@ clearVB_loopy       LDI     giga_xres
                     RET
 
 
-
-; do *NOT* use register4 to register7 during time slicing
-textStr             EQU     register0
-textNum             EQU     register0
-textBak             EQU     register0
-textHex             EQU     register1
-textLen             EQU     register2
-textOfs             EQU     register3
-textChr             EQU     register8
-textFont            EQU     register9
-textSlice           EQU     register10
-scanLine            EQU     register11
-digitMult           EQU     register12
-digitIndex          EQU     register13
-clearLoop           EQU     register14
-    
-    
-printInit           LDWI    SYS_VDrawBits_134
-                    STW     giga_sysFn
-                    LDW     fgbgColour
-                    STW     giga_sysArg0
-                    LD      cursorXY + 1                    ; xy = peek(256+2*y)*256 + x
+drawPixel           LD      drawPixel_xy + 1                ; poke peek(256 + 2*y)*256 + x, fg_colour
                     LSLW
                     INC     giga_vAC + 1
                     PEEK
-                    ST      giga_sysArg4 + 1
-                    LD      cursorXY
-                    ST      giga_sysArg4                    ; xy position
-                    RET
-
-
-
-                    ; prints text string pointed to by textStr
-printText           PUSH
-                    LDWI    printInit
-                    CALL    giga_vAC
-
-                    ; first byte is length
-printT_char         INC     textStr                         ; next char
-                    LDW     textStr             
-                    PEEK
-                    BEQ     printT_exit                     ; check for delimiting zero
-                    ST      textChr
-                    LDWI    printChar
-                    CALL    giga_vAC
-                    BRA     printT_char
-                    
-printT_exit         POP
-                    RET
-
-
-
-                    ; prints single digit in textNum
-printDigit          PUSH
-                    LDW     textNum
-printD_index        SUBW    digitMult
-                    BLT     printD_cont
-                    STW     textNum
-                    INC     digitIndex
-                    BRA     printD_index
-    
-printD_cont         LD      digitIndex
-                    BEQ     printD_exit
-                    ORI     0x30
-                    ST      textChr
-                    LDWI    printChar
-                    CALL    giga_vAC
-                    LDI     0x30
-                    ST      digitIndex
-printD_exit         POP
-                    RET
-
-
-                    ; prints 16bit int in textNum
-printInt16          PUSH
-                    LDWI    printInit
-                    CALL    giga_vAC
-                    LDI     0
-                    ST      digitIndex
-                    LDW     textNum
-                    BGE     printI16_pos
-                    LDI     0x2D
-                    ST      textChr
-                    LDWI    printChar
-                    CALL    giga_vAC
-                    LDI     0
-                    SUBW    textNum
-                    STW     textNum    
-    
-printI16_pos        LDWI    10000
-                    STW     digitMult
-                    LDWI    printDigit
-                    CALL    giga_vAC
-                    LDWI    1000
-                    STW     digitMult
-                    LDWI    printDigit
-                    CALL    giga_vAC
-                    LDI     100
-                    STW     digitMult
-                    LDWI    printDigit
-                    CALL    giga_vAC
-                    LDI     10
-                    STW     digitMult
-                    LDWI    printDigit
-                    CALL    giga_vAC
-                    LD      textNum
-                    ORI     0x30
-                    ST      textChr
-                    LDWI    printChar
-                    CALL    giga_vAC
-                    POP
-                    RET
-
-
-                    ; prints char in textChr
-printChar           LD      textChr
-                    ANDI    0x7F                            ; char can't be bigger than 127
-                    SUBI    82
-                    BGE     printC_text82
-                    ADDI    50
-                    BLT     printC_exit                     ; char<32 exit
-                    STW     textChr                         ; char-32
-                    LDWI    giga_text32                     ; text font slice base address for chars 32-81
-                    BRA     printC_font
-                    
-printC_text82       STW     textChr                         ; char-82
-                    LDWI    giga_text82                     ; text font slice base address for chars 82+
-                    
-printC_font         STW     textFont
-                    LD      textChr
-                    LSLW    
-                    LSLW    
-                    ADDW    textChr
-                    ADDW    textFont
-                    STW     textFont                        ; char*5 + textFont
-                    LDI     0x05
-
-printC_slice        ST      textSlice
-                    LDW     textFont                        ; text font slice base address
-                    LUP     0x00                            ; get ROM slice
-                    ST      giga_sysArg2
-                    SYS     134                             ; draw vertical slice, SYS_VDrawBits_134, 270 - 134/2 = 0xCB
-                    INC     textFont                        ; next vertical slice
-                    INC     giga_sysArg4                    ; next x
-                    LD      textSlice
-                    SUBI    1
-                    BNE     printC_slice
-                    
-                    ST      giga_sysArg2                    ; result of printC_slice is 0
-                    SYS     134                             ; draw last blank slice
-                    INC     giga_sysArg4                    ; using sysArg4 as a temporary cursor address for multiple char prints
-                    
-                    PUSH
-%if TIME_SLICING
-                    CALL    realTimeStubAddr
-%endif
-                    LD      cursorXY
-                    ADDI    giga_xfont
-                    ST      cursorXY
-                    SUBI    giga_xres - giga_xfont          ; last possible char on line
-                    BLE     printC_pop
-                    LDWI    newLineScroll                   ; next row, scroll at bottom
-                    CALL    giga_vAC
-                    
-printC_pop          POP
-
-printC_exit         RET
-
-
-
-                    ; clears the top giga_yfont lines of pixels in preparation of text scrolling
-clearCursorRow      PUSH
-                    LDWI    SYS_SetMemory_v2_54
-                    STW     giga_sysFn                      ; setup fill memory SYS routine
-                    LD      fgbgColour
-                    ST      giga_sysArg1                    ; fill value
-                    LDWI    giga_videoTable
-                    PEEK
-                    ST      giga_sysArg3                    ; row0 high byte address
-                    LDI     giga_yfont
-
-clearCR_loopy       ST      clearLoop                    
-                    LDI     giga_xres
-                    ST      giga_sysArg0
-                    LDI     0
-                    ST      giga_sysArg2                    ; low start address
-                    SYS     54                              ; fill memory
-                    INC     giga_sysArg3                    ; next line
-                    LD      clearLoop
-                    SUBI    1
-                    BNE     clearCR_loopy
-%if TIME_SLICING
-                    CALL    realTimeStubAddr
-%endif
-                    LDWI    printInit
-                    CALL    giga_vAC                        ; re-initialise the SYS registers
-                    POP
-                    RET
-
-
-                    ; print from top row to bottom row, then start scrolling 
-newLineScroll       LDI     giga_CursorX                    ; cursor x start
-                    ST      cursorXY
-                    ST      giga_sysArg4
-                    LDI     ENABLE_SCROLL_BIT
-                    ANDW    miscFlags
-                    BNE     newLS_cont0                     ; is scroll on or off?
-                    RET
-                    
-newLS_cont0         PUSH
-                    LDI     ON_BOTTOM_ROW_BIT
-                    ANDW    miscFlags                       ; is on bottom row flag?
-                    BNE     newLS_cont1
-                    LD      cursorXY + 1
-                    ADDI    giga_yfont
-                    ST      cursorXY + 1
-                    SUBI    giga_yres
-                    BLT     newLS_exit
-                    LDI     giga_yres - giga_yfont
-                    ST      cursorXY + 1
-                    
-newLS_cont1         LDWI    clearCursorRow
-                    CALL    giga_vAC
-                    LDWI    giga_videoTable
-                    STW     scanLine
-
-%if TIME_SLICING
-newLS_scroll        CALL    realTimeStubAddr
-                    LDW     scanLine
-%else
-newLS_scroll        LDW     scanLine
-%endif
-                    PEEK
-                    ADDI    giga_yfont
-                    ANDI    0x7F
-                    SUBI    giga_yfont
-                    BGE     newLS_adjust
-                    ADDI    giga_yfont
-                    
-newLS_adjust        ADDI    giga_yfont
-                    POKE    scanLine
-                    INC     scanLine                        ; scanline pointers are 16bits
-                    INC     scanLine
-                    LD      scanLine
-                    SUBI    0xF0                            ; scanline pointers end at 0x01EE
-                    BLT     newLS_scroll
-                    
-                    LDI     ON_BOTTOM_ROW_BIT
-                    ORW     miscFlags
-                    STW     miscFlags                       ; set on bottom row flag
-                    
-newLS_exit          LDWI    printInit
-                    CALL    giga_vAC                        ; re-initialise the SYS registers
-                    POP
+                    ST      drawPixel_xy + 1
+                    LD      fgbgColour + 1
+                    POKE    drawPixel_xy
                     RET
 
