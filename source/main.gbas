@@ -4,7 +4,7 @@ _arraysStart_ &hFFFF
 MODULE "alltheneurons.gbas"
 
 'setup
-mode 2
+mode 1
 cls
 
 
@@ -21,10 +21,10 @@ cls
 '  print(neuronNames$(i))
 'next i
 
-' add some pixels
+' add some white pixels
 
-for i = 2 to 298
-  pset (i AND 31) * 2 + 30, (i / 32) * 2 + 30, &h3F
+for i = 0 to 298
+  pset (i AND 31) * 3 + 30, (i / 32) * 3 + 30, &h3F
 next i
 
 
@@ -34,13 +34,17 @@ for i = 0 to 298
   gosub showNeuron
 next i
 
-' mark neuron 100
-neuronvar = 100
-neuroncolor = 0xFF
-gosub markNeuron
+' mark postsynaptic neurons of neuron ADAL with strength of the connection
+for i = 0 to #ADAL / 2 - 1
+  neuroncolor = ADAL(i) / 512
+  neuronvar = ADAL(i) AND &h1FF
+  gosub markNeuron
+next i
 
-' mark postsynaptic neurons of neuron 100
-
+' mark neuron 1
+' neuronvar = 0
+'neuroncolor = 0xFF
+'gosub markNeuron
 
 loop:
   goto loop
@@ -49,17 +53,17 @@ end
 
 ' set neuronvar neuron to neuroncolor
 showNeuron:
-  pset (neuronvar AND 31) * 2 + 30, (neuronvar / 32) * 2 + 30, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
 return
 
 ' highlight neuronvar neuron
 markNeuron:
-  pset (neuronvar AND 31) * 2 + 29, (neuronvar / 32) * 2 + 29, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 30, (neuronvar / 32) * 2 + 29, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 31, (neuronvar / 32) * 2 + 29, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 29, (neuronvar / 32) * 2 + 30, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 31, (neuronvar / 32) * 2 + 30, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 29, (neuronvar / 32) * 2 + 31, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 30, (neuronvar / 32) * 2 + 31, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 2 + 31, (neuronvar / 32) * 2 + 31, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
+  pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
 return

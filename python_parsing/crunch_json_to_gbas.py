@@ -63,7 +63,7 @@ with open('source/alltheneurons.gbas', 'w') as f:
       #  print(connIndex)
         f.write(hex(abs(indexWeight))+ ',') #this is WRONG because sign is necessary
       f.write("\n")
-      
+      # write lengths of all the neurons. Should this be addresses instead? What use do I have with this?
     f.write('dim neurons(' + str(len(linkedNeurons)-1) + ') = ')
     for neuron in linkedNeurons:
       f.write('#' + neuron + ',')
