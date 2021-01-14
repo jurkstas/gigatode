@@ -1534,7 +1534,6 @@ _page_0x0400                      LDLW                              0xFE
                                   DrawPixel                                                     ; Main: pset x+1, y+1 neuroncolor AND &h3F
 
                                   LDW                               _x
-                                  ADDI                              1
                                   ST                                drawPixel_xy
                                   LDW                               _y
                                   ADDI                              1
@@ -1542,7 +1541,7 @@ _page_0x0400                      LDLW                              0xFE
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x+1, y+1, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x, y+1, neuroncolor AND &h3F
 
                                   Return                                                        ; Main: return
 

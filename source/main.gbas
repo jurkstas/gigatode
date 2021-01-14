@@ -71,5 +71,5 @@ markNeuron:
   pset x+1, y  , neuroncolor AND &h3F
   pset x-1, y+1, neuroncolor AND &h3F
   pset x+1, y+1 neuroncolor AND &h3F
-  pset x+1, y+1, neuroncolor AND &h3F
+  pset x, y+1, neuroncolor AND &h3F
 return
