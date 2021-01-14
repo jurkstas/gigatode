@@ -36,7 +36,7 @@ next i
 
 ' mark postsynaptic neurons of neuron ADAL with strength of the connection
 for i = 0 to #ADAL / 2 - 1
-  neuroncolor = ADAL(i) / 512
+  neuroncolor = ADAL(i).hi LSR 1
   neuronvar = ADAL(i) AND &h1FF
   gosub markNeuron
 next i

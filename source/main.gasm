@@ -44,9 +44,9 @@ textWorkArea                      EQU                               0x7fa0
 
 ; Labels
 _entryPoint_                      EQU                               0x0200
-_loop                             EQU                               0x02ec
-_showNeuron                       EQU                               0x0302
-_markNeuron                       EQU                               0x033f
+_loop                             EQU                               0x02ed
+_showNeuron                       EQU                               0x0304
+_markNeuron                       EQU                               0x0341
 _next_0x0236                      EQU                               0x0236
 _next_0x02a3                      EQU                               0x028b
 _next_0x02d0                      EQU                               0x02b2
@@ -1356,16 +1356,16 @@ _next_0x02a3                      LDW                               _i
                                   LDI                               0
                                   STW                               _i                          ; Main: for i = 0 to #ADAL / 2 - 1
 
-_next_0x02d0                      LDWI                              0xffda
-                                  ADDW                              _i
-                                  ADDW                              _i
-                                  DEEK                              
-                                  STW                               mathX
-                                  LDWI                              512
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               _neuroncolor                ; Main: neuroncolor = ADAL(i) / 512
+_next_0x02d0                      LDW                               _i
+                                  STW                               memIndex0
+                                  LDWI                              0xffda
+                                  ADDW                              memIndex0
+                                  ADDW                              memIndex0
+                                  ADDI                              1
+                                  PEEK                              
+                                  STW                               mathShift
+                                  ShiftRight1bit                    
+                                  STW                               _neuroncolor                ; Main: neuroncolor = ADAL(i).hi LSR 1
 
                                   LDWI                              0xffda
                                   ADDW                              _i
@@ -1384,12 +1384,12 @@ _next_0x02d0                      LDWI                              0xffda
 _loop                             LDWI                              _loop
                                   CALL                              giga_vAC                    ; Main: goto loop
 
-                                  HALT                                                          ; Main: end
-
                                   STLW                              0xFE
                                   LDWI                              _page_0x0300
                                   CALL                              giga_vAC
 _page_0x0300                      LDLW                              0xFE
+                                  HALT                                                          ; Main: end
+
 _showNeuron                       PUSH                              
                                   LDW                               _neuronvar
                                   ANDI                              31
@@ -1503,11 +1503,11 @@ _markNeuron                       PUSH
                                   DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
 
                                   LDW                               _neuronvar
-                                  ANDI                              31
                                   STLW                              0xFE
                                   LDWI                              _page_0x0400
                                   CALL                              giga_vAC
 _page_0x0400                      LDLW                              0xFE
+                                  ANDI                              31
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
@@ -1619,11 +1619,11 @@ _page_0x0400                      LDLW                              0xFE
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
-                                  LDWI                              multiply16bit
                                   STLW                              0xFE
                                   LDWI                              _page_0x0500
                                   CALL                              giga_vAC
 _page_0x0500                      LDLW                              0xFE
+                                  LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              31
                                   ST                                drawPixel_xy
@@ -1660,7 +1660,8 @@ _page_0x0500                      LDLW                              0xFE
 romCheck                          EQU     0x7cb2
 multiply16bit                     EQU     0x7bcb
 divide16bit                       EQU     0x7da8
-scanlineMode                      EQU     0x7ba8
+shiftRight1bit                    EQU     0x7ba8
+scanlineMode                      EQU     0x7af5
 resetVideoFlags                   EQU     0x7bb2
 initClearFuncs                    EQU     0x7ca1
 clearVertBlinds                   EQU     0x7cc9
@@ -1809,6 +1810,13 @@ divide16_incx       LDW     mathMask
                     RET
                     
 divide16_exit       LDW     mathX
+                    RET
+
+
+shiftRight1bit      LDWI    SYS_LSRW1_48
+                    STW     giga_sysFn
+                    LDW     mathShift
+                    SYS     48
                     RET
 
 
