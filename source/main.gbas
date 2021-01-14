@@ -24,7 +24,9 @@ cls
 ' add some white pixels
 
 for i = 0 to 298
-  pset (i AND 31) * 3 + 30, (i / 32) * 3 + 30, &h3F
+  x = (i AND 31) * 3 + 30
+  y = (i / 32) * 3 + 30
+  pset x, y, &h3F
 next i
 
 
@@ -53,17 +55,21 @@ end
 
 ' set neuronvar neuron to neuroncolor
 showNeuron:
-  pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
+  x = (neuronvar AND 31) * 3 + 30
+  y = (neuronvar / 32) * 3 + 30
+  pset x, y, neuroncolor AND &h3F
 return
 
 ' highlight neuronvar neuron
 markNeuron:
-  pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
-  pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
+  x = (neuronvar AND 31) * 3 + 30
+  y = (neuronvar / 32) * 3 + 30
+  pset x-1, y-1, neuroncolor AND &h3F
+  pset x  , y-1, neuroncolor AND &h3F
+  pset x+1, y-1, neuroncolor AND &h3F
+  pset x-1, y  , neuroncolor AND &h3F
+  pset x+1, y  , neuroncolor AND &h3F
+  pset x-1, y+1, neuroncolor AND &h3F
+  pset x+1, y+1 neuroncolor AND &h3F
+  pset x+1, y+1, neuroncolor AND &h3F
 return

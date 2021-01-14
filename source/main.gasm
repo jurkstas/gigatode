@@ -44,20 +44,21 @@ textWorkArea                      EQU                               0x7fa0
 
 ; Labels
 _entryPoint_                      EQU                               0x0200
-_loop                             EQU                               0x02ed
-_showNeuron                       EQU                               0x0304
-_markNeuron                       EQU                               0x0341
+_loop                             EQU                               0x0310
+_showNeuron                       EQU                               0x0317
+_markNeuron                       EQU                               0x035c
 _next_0x0236                      EQU                               0x0236
-_next_0x02a3                      EQU                               0x028b
-_next_0x02d0                      EQU                               0x02b2
+_next_0x02a7                      EQU                               0x0293
+_next_0x02d4                      EQU                               0x02ba
 _page_0x0300                      EQU                               0x0300
 _page_0x0400                      EQU                               0x0400
-_page_0x0500                      EQU                               0x0500
 
 ; Global Variables
 _i                                EQU                               0x0030
-_neuronvar                        EQU                               0x0032
-_neuroncolor                      EQU                               0x0034
+_x                                EQU                               0x0032
+_y                                EQU                               0x0034
+_neuronvar                        EQU                               0x0036
+_neuroncolor                      EQU                               0x0038
 
 ; Local Variables
 
@@ -1312,7 +1313,8 @@ _next_0x0236                      LDW                               _i
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
-                                  ST                                drawPixel_xy
+                                  STW                               _x                          ; Main: x = (i AND 31) * 3 + 30
+
                                   LDW                               _i
                                   STW                               mathX
                                   LDI                               32
@@ -1325,10 +1327,15 @@ _next_0x0236                      LDW                               _i
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
+                                  STW                               _y                          ; Main: y = (i / 32) * 3 + 30
+
+                                  LDW                               _x
+                                  ST                                drawPixel_xy
+                                  LDW                               _y
                                   ST                                drawPixel_xy + 1
                                   LDI                               63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (i AND 31) * 3 + 30, (i / 32) * 3 + 30, &h3F
+                                  DrawPixel                                                     ; Main: pset x, y, &h3F
 
                                   ForNextFarVarAdd                  _i _next_0x0236 0xb0 0xb2   ; Main: next i
 
@@ -1339,7 +1346,7 @@ _next_0x0236                      LDW                               _i
                                   LDI                               1
                                   STW                               0xb2                        ; Main: for i = 0 to 298
 
-_next_0x02a3                      LDW                               _i
+_next_0x02a7                      LDW                               _i
                                   STW                               _neuronvar                  ; Main: neuronvar = i
 
                                   LDWI                              0xe0da
@@ -1351,12 +1358,12 @@ _next_0x02a3                      LDW                               _i
                                   LDWI                              _showNeuron
                                   CALL                              giga_vAC                    ; Main: gosub showNeuron
 
-                                  ForNextFarVarAdd                  _i _next_0x02a3 0xb0 0xb2   ; Main: next i
+                                  ForNextFarVarAdd                  _i _next_0x02a7 0xb0 0xb2   ; Main: next i
 
                                   LDI                               0
                                   STW                               _i                          ; Main: for i = 0 to #ADAL / 2 - 1
 
-_next_0x02d0                      LDW                               _i
+_next_0x02d4                      LDW                               _i
                                   STW                               memIndex0
                                   LDWI                              0xffda
                                   ADDW                              memIndex0
@@ -1379,15 +1386,15 @@ _next_0x02d0                      LDW                               _i
                                   LDWI                              _markNeuron
                                   CALL                              giga_vAC                    ; Main: gosub markNeuron
 
-                                  ForNextFarInc                     _i _next_0x02d0 18          ; Main: next i
-
-_loop                             LDWI                              _loop
-                                  CALL                              giga_vAC                    ; Main: goto loop
-
                                   STLW                              0xFE
                                   LDWI                              _page_0x0300
                                   CALL                              giga_vAC
 _page_0x0300                      LDLW                              0xFE
+                                  ForNextFarInc                     _i _next_0x02d4 18          ; Main: next i
+
+_loop                             LDWI                              _loop
+                                  CALL                              giga_vAC                    ; Main: goto loop
+
                                   HALT                                                          ; Main: end
 
 _showNeuron                       PUSH                              
@@ -1399,7 +1406,8 @@ _showNeuron                       PUSH
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
-                                  ST                                drawPixel_xy
+                                  STW                               _x                          ; Main: x = (neuronvar AND 31) * 3 + 30
+
                                   LDW                               _neuronvar
                                   STW                               mathX
                                   LDI                               32
@@ -1412,11 +1420,16 @@ _showNeuron                       PUSH
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
+                                  STW                               _y                          ; Main: y = (neuronvar / 32) * 3 + 30
+
+                                  LDW                               _x
+                                  ST                                drawPixel_xy
+                                  LDW                               _y
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x, y, neuroncolor AND &h3F
 
                                   Return                                                        ; Main: return
 
@@ -1428,222 +1441,108 @@ _markNeuron                       PUSH
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
-                                  ADDI                              29
-                                  ST                                drawPixel_xy
+                                  ADDI                              30
+                                  STW                               _x                          ; Main: x = (neuronvar AND 31) * 3 + 30
+
                                   LDW                               _neuronvar
                                   STW                               mathX
                                   LDI                               32
                                   STW                               mathY
                                   LDWI                              divide16bit
                                   CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              29
-                                  ST                                drawPixel_xy + 1
-                                  LDW                               _neuroncolor
-                                  ANDI                              63
-                                  ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
-
-                                  LDW                               _neuronvar
-                                  ANDI                              31
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
+                                  STW                               _y                          ; Main: y = (neuronvar / 32) * 3 + 30
+
+                                  LDW                               _x
+                                  SUBI                              1
                                   ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              29
+                                  LDW                               _y
+                                  SUBI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x-1, y-1, neuroncolor AND &h3F
 
-                                  LDW                               _neuronvar
-                                  ANDI                              31
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              31
+                                  LDW                               _x
                                   ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              29
+                                  LDW                               _y
+                                  SUBI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 29, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x  , y-1, neuroncolor AND &h3F
 
-                                  LDW                               _neuronvar
+                                  LDW                               _x
+                                  ADDI                              1
+                                  ST                                drawPixel_xy
+                                  LDW                               _y
+                                  SUBI                              1
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset x+1, y-1, neuroncolor AND &h3F
+
+                                  LDW                               _x
+                                  SUBI                              1
+                                  ST                                drawPixel_xy
+                                  LDW                               _y
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; Main: pset x-1, y  , neuroncolor AND &h3F
+
+                                  LDW                               _x
+                                  ADDI                              1
+                                  ST                                drawPixel_xy
+                                  LDW                               _y
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              63
                                   STLW                              0xFE
                                   LDWI                              _page_0x0400
                                   CALL                              giga_vAC
 _page_0x0400                      LDLW                              0xFE
-                                  ANDI                              31
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              29
-                                  ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              30
-                                  ST                                drawPixel_xy + 1
-                                  LDW                               _neuroncolor
-                                  ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x+1, y  , neuroncolor AND &h3F
 
-                                  LDW                               _neuronvar
-                                  ANDI                              31
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              31
+                                  LDW                               _x
+                                  SUBI                              1
                                   ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              30
+                                  LDW                               _y
+                                  ADDI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 30, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x-1, y+1, neuroncolor AND &h3F
 
-                                  LDW                               _neuronvar
-                                  ANDI                              31
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              29
+                                  LDW                               _x
+                                  ADDI                              1
                                   ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              31
+                                  LDW                               _y
+                                  ADDI                              1
                                   ST                                drawPixel_xy + 1
-                                  LDW                               _neuroncolor
-                                  ANDI                              63
-                                  ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 29, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x+1, y+1 neuroncolor AND &h3F
 
-                                  LDW                               _neuronvar
-                                  ANDI                              31
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              30
+                                  LDW                               _x
+                                  ADDI                              1
                                   ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              31
+                                  LDW                               _y
+                                  ADDI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 30, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
-
-                                  LDW                               _neuronvar
-                                  ANDI                              31
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  STLW                              0xFE
-                                  LDWI                              _page_0x0500
-                                  CALL                              giga_vAC
-_page_0x0500                      LDLW                              0xFE
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              31
-                                  ST                                drawPixel_xy
-                                  LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
-                                  STW                               mathX
-                                  LDI                               3
-                                  STW                               mathY
-                                  LDWI                              multiply16bit
-                                  CALL                              giga_vAC
-                                  ADDI                              31
-                                  ST                                drawPixel_xy + 1
-                                  LDW                               _neuroncolor
-                                  ANDI                              63
-                                  ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset (neuronvar AND 31) * 3 + 31, (neuronvar / 32) * 3 + 31, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x+1, y+1, neuroncolor AND &h3F
 
                                   Return                                                        ; Main: return
 
