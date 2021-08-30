@@ -1,0 +1,42 @@
+dim neuron_state%(298)
+dim muscle_state%(50)
+dim neuron_current%(298)
+dim muscle_current%(50)
+dim neuron_next%(298)
+dim musle_next%(50)
+dim meta%(298)
+
+' Function for initializing connectome struct
+proc ctm_init, Connectome
+
+endproc
+
+' Propagates each neuron connection weight into the next state
+proc ctm_ping_neuron, Connectome, id
+
+endproc
+' Propagates connections and sets state to zero, simulating
+' a neuron discharge
+proc ctm_discharge_neuron, Connectome, id
+  
+
+endproc
+' Completes one cycle ('tick') of the nematode neural system
+' accepts an array of neurons to stimulate and the length of
+' that list---otherwise NULL, 0
+proc ctm_neural_cycle, Connectome, stim_neuron, len
+
+endproc
+' Utility functions
+
+' Functions for returning cell weights
+' int16_t ctm_get_weight(Connectome* const, const uint16_t);
+proc ctm_weight_query, Connectome, input_id, query_result, len_query
+
+endproc
+' Check whether or not one or more neurons discharged 
+' in the last tick
+' uint8_t ctm_get_discharge(Connectome* const, const uint16_t);
+proc ctm_discharge_query, Connectome, input_id, query_result, len_query
+
+endproc

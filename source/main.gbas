@@ -7,13 +7,7 @@ MODULE "alltheneurons.gbas"
 mode 1
 cls
 
-dim neuron_state%(298)
-dim muscle_state%(50)
-dim neuron_current%(298)
-dim muscle_current%(50)
-dim neuron_next%(298)
-dim musle_next%(50)
-dim meta%(298)
+
 
 ' print("hello world")
 'print("lengths")
@@ -76,6 +70,8 @@ markNeuron:
   pset x-1, y  , neuroncolor AND &h3F
   pset x+1, y  , neuroncolor AND &h3F
   pset x-1, y+1, neuroncolor AND &h3F
-  pset x+1, y+1 neuroncolor AND &h3F
-  pset x, y+1, neuroncolor AND &h3F
+  pset x+1, y+1  neuroncolor AND &h3F
+  pset x  , y+1, neuroncolor AND &h3F
 return
+
+MODULE "connectome.gbas"

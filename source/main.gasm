@@ -52,6 +52,12 @@ _next_0x02a7                      EQU                               0x0293
 _next_0x02d4                      EQU                               0x02ba
 _page_0x0300                      EQU                               0x0300
 _page_0x0400                      EQU                               0x0400
+_ctm_init                         EQU                               0x0448
+_ctm_ping_neuron                  EQU                               0x044b
+_ctm_discharge_neuron             EQU                               0x044e
+_ctm_neural_cycle                 EQU                               0x045e
+_ctm_weight_query                 EQU                               0x0461
+_ctm_discharge_query              EQU                               0x0464
 
 ; Global Variables
 _i                                EQU                               0x0030
@@ -61,6 +67,22 @@ _neuronvar                        EQU                               0x0036
 _neuroncolor                      EQU                               0x0038
 
 ; Local Variables
+_ctm_init_Connectome              EQU                               0x00d8
+_ctm_ping_neuron_Connectome       EQU                               0x00d8
+_ctm_ping_neuron_id               EQU                               0x00da
+_ctm_discharge_neuron_Connectome  EQU                               0x00d8
+_ctm_discharge_neuron_id          EQU                               0x00da
+_ctm_neural_cycle_Connectome      EQU                               0x00d8
+_ctm_neural_cycle_stim_neuron     EQU                               0x00da
+_ctm_neural_cycle_len             EQU                               0x00dc
+_ctm_weight_query_Connectome      EQU                               0x00d8
+_ctm_weight_query_input_id        EQU                               0x00da
+_ctm_weight_query_query_result    EQU                               0x00dc
+_ctm_weight_query_len_query       EQU                               0x00de
+_ctm_discharge_query_Connectome   EQU                               0x00d8
+_ctm_discharge_query_input_id     EQU                               0x00da
+_ctm_discharge_query_query_result EQU                               0x00dc
+_ctm_discharge_query_len_query    EQU                               0x00de
 
 ; Arrays
 _ADAL_array                       EQU                               0xffda
@@ -1545,7 +1567,7 @@ _page_0x0400                      LDLW                              0xFE
                                   LDW                               _y
                                   ADDI                              1
                                   ST                                drawPixel_xy + 1
-                                  DrawPixel                                                     ; Main: pset x+1, y+1 neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x+1, y+1  neuroncolor AND &h3F
 
                                   LDW                               _x
                                   ST                                drawPixel_xy
@@ -1555,9 +1577,40 @@ _page_0x0400                      LDLW                              0xFE
                                   LDW                               _neuroncolor
                                   ANDI                              63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x, y+1, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; Main: pset x  , y+1, neuroncolor AND &h3F
 
                                   Return                                                        ; Main: return
+
+_ctm_init                         PUSH                                                          ; connectome: proc ctm_init, Connectome
+
+                                  Return                                                        ; connectome: endproc
+
+_ctm_ping_neuron                  PUSH                                                          ; connectome: proc ctm_ping_neuron, Connectome, id
+
+                                  Return                                                        ; connectome: endproc
+
+_ctm_discharge_neuron             PUSH                                                          ; connectome: proc ctm_discharge_neuron, Connectome, id
+
+                                  LDI                               0x01
+                                  STW                               0xd8
+                                  LDI                               0x02
+                                  STW                               0xda
+                                  LDWI                              _ctm_ping_neuron
+                                  CALL                              giga_vAC                    ; connectome: call ctm_ping_neuron, 1, 2
+
+                                  Return                                                        ; connectome: endproc
+
+_ctm_neural_cycle                 PUSH                                                          ; connectome: proc ctm_neural_cycle, Connectome, stim_neuron, len
+
+                                  Return                                                        ; connectome: endproc
+
+_ctm_weight_query                 PUSH                                                          ; connectome: proc ctm_weight_query, Connectome, input_id, query_result, len_query
+
+                                  Return                                                        ; connectome: endproc
+
+_ctm_discharge_query              PUSH                                                          ; connectome: proc ctm_discharge_query, Connectome, input_id, query_result, len_query
+
+                                  Return                                                        ; connectome: endproc
 
                                   HALT                                                          ; Main: END
 
