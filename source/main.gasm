@@ -29,35 +29,39 @@ timerPrev                         EQU                               register0 + 
 ; Internal Constants
 ENABLE_SCROLL_BIT                 EQU                               0x0001
 ON_BOTTOM_ROW_BIT                 EQU                               0x0002
+DISABLE_CLIP_BIT                  EQU                               0x0004
 ENABLE_SCROLL_MSK                 EQU                               0xfffe
 ON_BOTTOM_ROW_MSK                 EQU                               0xfffd
+DISABLE_CLIP_MSK                  EQU                               0xfffb
 
 ; Internal Buffers
 regsWorkArea                      EQU                               0x0000
 textWorkArea                      EQU                               0x7fa0
 
 ; Includes
-%includePath                      "./runtime-v106"
+%includePath                      "./runtime"
 %include                          util.i
 %include                          gigatron.i
 %include                          macros.i
 
 ; Labels
 _entryPoint_                      EQU                               0x0200
-_loop                             EQU                               0x0310
-_showNeuron                       EQU                               0x0317
-_markNeuron                       EQU                               0x035c
+_loop                             EQU                               0x0302
+_showNeuron                       EQU                               0x0309
+_markNeuron                       EQU                               0x034a
 _next_0x0236                      EQU                               0x0236
-_next_0x02a7                      EQU                               0x0293
-_next_0x02d4                      EQU                               0x02ba
+_next_0x02a3                      EQU                               0x028f
+_next_0x02d0                      EQU                               0x02b6
 _page_0x0300                      EQU                               0x0300
 _page_0x0400                      EQU                               0x0400
-_ctm_init                         EQU                               0x0448
-_ctm_ping_neuron                  EQU                               0x044b
-_ctm_discharge_neuron             EQU                               0x044e
-_ctm_neural_cycle                 EQU                               0x045e
-_ctm_weight_query                 EQU                               0x0461
-_ctm_discharge_query              EQU                               0x0464
+_ctm_init                         EQU                               0x0437
+_ctm_ping_neuron                  EQU                               0x043a
+_ctm_discharge_neuron             EQU                               0x043d
+_ctm_neural_cycle                 EQU                               0x0440
+_ctm_weight_query                 EQU                               0x0443
+_ctm_discharge_query              EQU                               0x0446
+
+; Constants
 
 ; Global Variables
 _i                                EQU                               0x0030
@@ -686,19 +690,12 @@ _VD9_array                        DW                                0x0c93 0x0c9
 _neurons_array                    EQU                               0xe0da
 _neurons_array                    DW                                0x0026 0x0022 0x003a 0x0028 0x0010 0x001c 0x0024 0x0020 0x0008 0x0008 0x001e 0x001a 0x0022 0x0024 0x0022 0x001a 0x0012 0x001a 0x0012 0x0010 0x001e 0x001e 0x000c 0x0018 0x000e 0x0006 0x000c 0x0026 0x0014 0x000c 0x0016 0x0012 0x0018 0x000e 0x0012 0x0014 0x0010 0x000c 0x000e 0x0012 0x0016 0x000a 0x000a 0x0020 0x0022 0x0014 0x0010 0x000a 0x0008 0x000c 0x0012 0x0010 0x0012 0x0066 0x0072 0x0054 0x0050 0x002e 0x0038 0x002a 0x0030 0x0022 0x001e 0x0026 0x0024 0x0020 0x0022 0x0018 0x0038 0x0026 0x0022 0x0022 0x0012 0x001a 0x0012 0x0018 0x0012 0x000e 0x0016 0x0010 0x0010 0x0016 0x0024 0x002a 0x001c 0x0020 0x0014 0x0024 0x001a 0x001e 0x0018 0x001e 0x000e 0x0010 0x0020 0x0028 0x0022 0x0028 0x001c 0x0012 0x0012 0x001a 0x001a 0x0016 0x0010 0x0012 0x0012 0x0014 0x004a 0x0016 0x0028 0x001a 0x001e 0x0024 0x0034 0x000a 0x000a 0x0006 0x0006 0x0006 0x0008 0x000a 0x000e 0x001a 0x0010 0x001c 0x0022 0x0010 0x0012 0x0010 0x0012 0x001a 0x001a 0x0016 0x0014 0x0014 0x0014 0x0008 0x000c 0x000e 0x0018 0x001a 0x0012 0x000c 0x0010 0x000c 0x0014 0x0014 0x0020 0x0020 0x0010 0x0016 0x001a 0x0018 0x000c 0x000a 0x0010 0x0010 0x0014 0x0012 0x000c 0x0016 0x0010 0x000e 0x0008 0x001a 0x0004 0x0004 0x0010 0x0044 0x004c 0x000c 0x000e 0x0010 0x002a 0x0030 0x0028 0x002c 0x000e 0x0022 0x0034 0x0020 0x000a 0x000a 0x001e 0x0024 0x0030 0x0030 0x001e 0x0014 0x001e 0x0012 0x001c 0x002e 0x0020 0x0032 0x0028 0x0032 0x0006 0x0006 0x001e 0x0030 0x001a 0x0024 0x0016 0x001a 0x0024 0x001a 0x0022 0x002c 0x0016 0x000c 0x0008 0x001a 0x0014 0x0006 0x0034 0x002a 0x000c 0x000e 0x000c 0x0010 0x0014 0x000c 0x0008 0x0006 0x0006 0x0014 0x001a 0x0004 0x0004 0x0004 0x0004 0x0004 0x0006 0x000a 0x0008 0x0018 0x001a 0x0016 0x0016 0x0024 0x001a 0x0020 0x001a 0x000c 0x0012 0x0010 0x0012 0x0014 0x001c 0x0012 0x0018 0x0010 0x0010 0x001a 0x0016 0x0010 0x000c 0x0014 0x002c 0x0016 0x001e 0x001a 0x0016 0x0014 0x001c 0x0024 0x0020 0x002a 0x0018 0x0018 0x002c 0x0018 0x0016 0x0014 0x001c 0x000c 0x001c 0x001e 0x001e 0x0020 0x002c 0x000e 0x0014 0x0004 0x001a 0x0012 0x000e 0x0010 0x0018 0x0014 0x0012 0x0010 0x0010 0x0016 0x000e 0x0008 0x000c 
 _neuron_state_array               EQU                               0xd688
-_neuron_state_array               DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 _muscle_state_array               EQU                               0xd655
-_muscle_state_array               DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 _neuron_current_array             EQU                               0xd52a
-_neuron_current_array             DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 _muscle_current_array             EQU                               0xd4f7
-_muscle_current_array             DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 _neuron_next_array                EQU                               0xd3cc
-_neuron_next_array                DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 _musle_next_array                 EQU                               0xd399
-_musle_next_array                 DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 _meta_array                       EQU                               0xd26e
-_meta_array                       DB                                0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 
 
 ; Strings
 _neuronNames$                     EQU                               0xd7b3
@@ -1316,6 +1313,8 @@ _neuronNames$_0xda09              DB                                3 'VD9' 0
 
 ; Define Loader Image Chunks
 
+; Define Midis
+
 ; Define Sprites
 
 ; Define Fonts
@@ -1326,80 +1325,77 @@ _neuronNames$_0xda09              DB                                3 'VD9' 0
 _entryPoint_                      LDI                               0x28
                                   STW                               romType
                                   RomCheck                          
-                                  Initialise                                                    ; Main: INIT
+                                  Initialise                                                    ; INIT
 
                                   LDI                               1
                                   STW                               graphicsMode
-                                  ScanlineMode                                                  ; Main: mode 1
+                                  ScanlineMode                                                  ; mode 1
 
-                                  ClearVertBlinds                                               ; Main: cls
+                                  ClearVertBlinds                                               ; cls
 
                                   LDI                               0
                                   STW                               _i
                                   LDWI                              298
                                   STW                               0xb0
                                   LDI                               1
-                                  STW                               0xb2                        ; Main: for i = 0 to 298
+                                  STW                               0xb2                        ; for i = 0 to 298
 
 _next_0x0236                      LDW                               _i
-                                  ANDI                              31
+                                  ANDI                              0x001f
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
-                                  ADDI                              30
-                                  STW                               _x                          ; Main: x = (i AND 31) * 3 + 30
+                                  STW                               _x                          ; x = (i AND 31) * 3
 
                                   LDW                               _i
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
+                                  STW                               mathShift
+                                  ShiftRight5bit                    
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
-                                  ADDI                              30
-                                  STW                               _y                          ; Main: y = (i / 32) * 3 + 30
+                                  STW                               _y                          ; y = (i LSR 5) * 3
 
                                   LDW                               _x
+                                  ADDI                              30
                                   ST                                drawPixel_xy
                                   LDW                               _y
+                                  ADDI                              30
                                   ST                                drawPixel_xy + 1
                                   LDI                               63
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x, y, &h3F
+                                  DrawPixel                                                     ; pset x + 30, y + 30, &h3F
 
-                                  ForNextFarVarAdd                  _i _next_0x0236 0xb0 0xb2   ; Main: next i
+                                  ForNextFarVarAdd                  _i _next_0x0236 0xb0 0xb2   ; next i
 
                                   LDI                               0
                                   STW                               _i
                                   LDWI                              298
                                   STW                               0xb0
                                   LDI                               1
-                                  STW                               0xb2                        ; Main: for i = 0 to 298
+                                  STW                               0xb2                        ; for i = 0 to 298
 
-_next_0x02a7                      LDW                               _i
-                                  STW                               _neuronvar                  ; Main: neuronvar = i
+_next_0x02a3                      LDW                               _i
+                                  STW                               _neuronvar                  ; neuronvar = i
 
                                   LDWI                              0xe0da
                                   ADDW                              _neuronvar
                                   ADDW                              _neuronvar
                                   DEEK                              
-                                  STW                               _neuroncolor                ; Main: neuroncolor = neurons(neuronvar)
+                                  STW                               _neuroncolor                ; neuroncolor = neurons(neuronvar)
 
                                   LDWI                              _showNeuron
-                                  CALL                              giga_vAC                    ; Main: gosub showNeuron
+                                  CALL                              giga_vAC                    ; gosub showNeuron
 
-                                  ForNextFarVarAdd                  _i _next_0x02a7 0xb0 0xb2   ; Main: next i
+                                  ForNextFarVarAdd                  _i _next_0x02a3 0xb0 0xb2   ; next i
 
                                   LDI                               0
-                                  STW                               _i                          ; Main: for i = 0 to #ADAL / 2 - 1
+                                  STW                               _i                          ; for i = 0 to #ADAL / 2 - 1
 
-_next_0x02d4                      LDW                               _i
+_next_0x02d0                      LDW                               _i
                                   STW                               memIndex0
                                   LDWI                              0xffda
                                   ADDW                              memIndex0
@@ -1408,7 +1404,7 @@ _next_0x02d4                      LDW                               _i
                                   PEEK                              
                                   STW                               mathShift
                                   ShiftRight1bit                    
-                                  STW                               _neuroncolor                ; Main: neuroncolor = ADAL(i).hi LSR 1
+                                  STW                               _neuroncolor                ; neuroncolor = ADAL(i).hi LSR 1
 
                                   LDWI                              0xffda
                                   ADDW                              _i
@@ -1417,82 +1413,76 @@ _next_0x02d4                      LDW                               _i
                                   STW                               0xe8
                                   LDWI                              0x01ff
                                   ANDW                              0xe8
-                                  STW                               _neuronvar                  ; Main: neuronvar = ADAL(i) AND &h1FF
+                                  STW                               _neuronvar                  ; neuronvar = ADAL(i) AND &h1FF
 
                                   LDWI                              _markNeuron
-                                  CALL                              giga_vAC                    ; Main: gosub markNeuron
+                                  CALL                              giga_vAC                    ; gosub markNeuron
+
+                                  ForNextFarInc                     _i _next_0x02d0 18          ; next i
 
                                   STLW                              0xFE
                                   LDWI                              _page_0x0300
                                   CALL                              giga_vAC
 _page_0x0300                      LDLW                              0xFE
-                                  ForNextFarInc                     _i _next_0x02d4 18          ; Main: next i
-
 _loop                             LDWI                              _loop
-                                  CALL                              giga_vAC                    ; Main: goto loop
+                                  CALL                              giga_vAC                    ; goto loop
 
-                                  HALT                                                          ; Main: end
+                                  HALT                                                          ; end
 
 _showNeuron                       PUSH                              
                                   LDW                               _neuronvar
-                                  ANDI                              31
+                                  ANDI                              0x001f
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
-                                  ADDI                              30
-                                  STW                               _x                          ; Main: x = (neuronvar AND 31) * 3 + 30
+                                  STW                               _x                          ; x = (neuronvar AND 31) * 3
 
                                   LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
+                                  STW                               mathShift
+                                  ShiftRight5bit                    
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
-                                  ADDI                              30
-                                  STW                               _y                          ; Main: y = (neuronvar / 32) * 3 + 30
+                                  STW                               _y                          ; y = (neuronvar LSR 5) * 3
 
                                   LDW                               _x
+                                  ADDI                              30
                                   ST                                drawPixel_xy
                                   LDW                               _y
+                                  ADDI                              30
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x, y, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x + 30, y + 30, neuroncolor AND &h3F
 
-                                  Return                                                        ; Main: return
+                                  Return                                                        ; return
 
 _markNeuron                       PUSH                              
                                   LDW                               _neuronvar
-                                  ANDI                              31
+                                  ANDI                              0x001f
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
-                                  STW                               _x                          ; Main: x = (neuronvar AND 31) * 3 + 30
+                                  STW                               _x                          ; x = (neuronvar AND 31) * 3 + 30
 
                                   LDW                               _neuronvar
-                                  STW                               mathX
-                                  LDI                               32
-                                  STW                               mathY
-                                  LDWI                              divide16bit
-                                  CALL                              giga_vAC
+                                  STW                               mathShift
+                                  ShiftRight5bit                    
                                   STW                               mathX
                                   LDI                               3
                                   STW                               mathY
                                   LDWI                              multiply16bit
                                   CALL                              giga_vAC
                                   ADDI                              30
-                                  STW                               _y                          ; Main: y = (neuronvar / 32) * 3 + 30
+                                  STW                               _y                          ; y = (neuronvar LSR 5) * 3 + 30
 
                                   LDW                               _x
                                   SUBI                              1
@@ -1501,9 +1491,9 @@ _markNeuron                       PUSH
                                   SUBI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x-1, y-1, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x-1, y-1, neuroncolor AND &h3F
 
                                   LDW                               _x
                                   ST                                drawPixel_xy
@@ -1511,9 +1501,9 @@ _markNeuron                       PUSH
                                   SUBI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x  , y-1, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x  , y-1, neuroncolor AND &h3F
 
                                   LDW                               _x
                                   ADDI                              1
@@ -1522,9 +1512,9 @@ _markNeuron                       PUSH
                                   SUBI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x+1, y-1, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x+1, y-1, neuroncolor AND &h3F
 
                                   LDW                               _x
                                   SUBI                              1
@@ -1532,9 +1522,9 @@ _markNeuron                       PUSH
                                   LDW                               _y
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x-1, y  , neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x-1, y  , neuroncolor AND &h3F
 
                                   LDW                               _x
                                   ADDI                              1
@@ -1542,32 +1532,35 @@ _markNeuron                       PUSH
                                   LDW                               _y
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
+                                  ST                                fgbgColour + 1
+                                  DrawPixel                                                     ; pset x+1, y  , neuroncolor AND &h3F
+
+                                  LDW                               _x
+                                  SUBI                              1
+                                  ST                                drawPixel_xy
+                                  LDW                               _y
+                                  ADDI                              1
+                                  ST                                drawPixel_xy + 1
+                                  LDW                               _neuroncolor
+                                  ANDI                              0x003f
                                   STLW                              0xFE
                                   LDWI                              _page_0x0400
                                   CALL                              giga_vAC
 _page_0x0400                      LDLW                              0xFE
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x+1, y  , neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x-1, y+1, neuroncolor AND &h3F
 
                                   LDW                               _x
-                                  SUBI                              1
+                                  ADDI                              1
                                   ST                                drawPixel_xy
                                   LDW                               _y
                                   ADDI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x-1, y+1, neuroncolor AND &h3F
-
-                                  LDW                               _x
-                                  ADDI                              1
-                                  ST                                drawPixel_xy
-                                  LDW                               _y
-                                  ADDI                              1
-                                  ST                                drawPixel_xy + 1
-                                  DrawPixel                                                     ; Main: pset x+1, y+1  neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x+1, y+1,  neuroncolor AND &h3F
 
                                   LDW                               _x
                                   ST                                drawPixel_xy
@@ -1575,44 +1568,37 @@ _page_0x0400                      LDLW                              0xFE
                                   ADDI                              1
                                   ST                                drawPixel_xy + 1
                                   LDW                               _neuroncolor
-                                  ANDI                              63
+                                  ANDI                              0x003f
                                   ST                                fgbgColour + 1
-                                  DrawPixel                                                     ; Main: pset x  , y+1, neuroncolor AND &h3F
+                                  DrawPixel                                                     ; pset x  , y+1, neuroncolor AND &h3F
 
-                                  Return                                                        ; Main: return
+                                  Return                                                        ; return
 
-_ctm_init                         PUSH                                                          ; connectome: proc ctm_init, Connectome
+_ctm_init                         PUSH                                                          ; proc ctm_init, Connectome
 
-                                  Return                                                        ; connectome: endproc
+                                  Return                                                        ; endproc
 
-_ctm_ping_neuron                  PUSH                                                          ; connectome: proc ctm_ping_neuron, Connectome, id
+_ctm_ping_neuron                  PUSH                                                          ; proc ctm_ping_neuron, Connectome, id
 
-                                  Return                                                        ; connectome: endproc
+                                  Return                                                        ; endproc
 
-_ctm_discharge_neuron             PUSH                                                          ; connectome: proc ctm_discharge_neuron, Connectome, id
+_ctm_discharge_neuron             PUSH                                                          ; proc ctm_discharge_neuron, Connectome, id
 
-                                  LDI                               0x01
-                                  STW                               0xd8
-                                  LDI                               0x02
-                                  STW                               0xda
-                                  LDWI                              _ctm_ping_neuron
-                                  CALL                              giga_vAC                    ; connectome: call ctm_ping_neuron, 1, 2
+                                  Return                                                        ; endproc
 
-                                  Return                                                        ; connectome: endproc
+_ctm_neural_cycle                 PUSH                                                          ; proc ctm_neural_cycle, Connectome, stim_neuron, len
 
-_ctm_neural_cycle                 PUSH                                                          ; connectome: proc ctm_neural_cycle, Connectome, stim_neuron, len
+                                  Return                                                        ; endproc
 
-                                  Return                                                        ; connectome: endproc
+_ctm_weight_query                 PUSH                                                          ; proc ctm_weight_query, Connectome, input_id, query_result, len_query
 
-_ctm_weight_query                 PUSH                                                          ; connectome: proc ctm_weight_query, Connectome, input_id, query_result, len_query
+                                  Return                                                        ; endproc
 
-                                  Return                                                        ; connectome: endproc
+_ctm_discharge_query              PUSH                                                          ; proc ctm_discharge_query, Connectome, input_id, query_result, len_query
 
-_ctm_discharge_query              PUSH                                                          ; connectome: proc ctm_discharge_query, Connectome, input_id, query_result, len_query
+                                  Return                                                        ; endproc
 
-                                  Return                                                        ; connectome: endproc
-
-                                  HALT                                                          ; Main: END
+                                  HALT                                                          ; END
 
 
 
@@ -1622,15 +1608,15 @@ _ctm_discharge_query              PUSH                                          
 ;****************************************************************************************************************************************
 ;****************************************************************************************************************************************
 
-romCheck                          EQU     0x7cb2
-multiply16bit                     EQU     0x7bcb
-divide16bit                       EQU     0x7da8
-shiftRight1bit                    EQU     0x7ba8
-scanlineMode                      EQU     0x7af5
-resetVideoFlags                   EQU     0x7bb2
-initClearFuncs                    EQU     0x7ca1
-clearVertBlinds                   EQU     0x7cc9
-drawPixel                         EQU     0x7bbe
+romCheck                          EQU     0x7db2
+multiply16bit                     EQU     0x7ccb
+shiftRight1bit                    EQU     0x7ca8
+shiftRight5bit                    EQU     0x7bf5
+scanlineMode                      EQU     0x7beb
+resetVideoFlags                   EQU     0x7cb2
+initClearFuncs                    EQU     0x7da1
+clearVertBlinds                   EQU     0x7dc9
+drawPixel                         EQU     0x7cbe
 convertEqOpAddr                   EQU     0x00c0
 convertNeOpAddr                   EQU     0x00c2
 convertLeOpAddr                   EQU     0x00c4
@@ -1657,19 +1643,21 @@ lutIndex            EQU     register8
 romType             EQU     register0
 romErrAddr          EQU     register1
 romErrPixel         EQU     register2
+romExec_vLR         EQU     register0
+romReadAddr         EQU     register0
 
 
 romCheck            LD      giga_romType
                     ANDI    0xFC
                     SUBW    romType
                     BGE     romC_return
-                    LDWI    giga_vram
+                    LDWI    giga_vram + giga_yres/2*256 + giga_xres/2
                     STW     romErrAddr
                     
 romC_loop           LD      romErrPixel
                     POKE    romErrAddr
                     INC     romErrPixel
-                    BRA     romC_loop                       ; flash left hand corner pixel indicating rom error
+                    BRA     romC_loop                       ; flash center pixel indicating rom error
                     
 romC_return         RET                    
 
@@ -1723,65 +1711,17 @@ multiply16_exit     LDW     mathSum
                     RET
 
 
-                    ; accumulator:mathRem = mathX / mathY, (results 16bit)
-divide16bit         LDW     mathX
-                    XORW    mathY
-                    STW     mathSign
-                    LDW     mathX
-                    BGE     divide16_pos0
-                    LDI     0
-                    SUBW    mathX
-                    STW     mathX
-                    
-divide16_pos0       LDW     mathY                     
-                    BGE     divide16_pos1
-                    LDI     0
-                    SUBW    mathY
-                    STW     mathY
-                    
-divide16_pos1       LDI     0
-                    STW     mathRem
-                    LDI     1
-    
-divide16_loop       STW     mathMask
-                    LDW     mathRem
-                    LSLW
-                    STW     mathRem
-                    LDW     mathX
-                    BGE     divide16_incr
-                    INC     mathRem
-                    
-divide16_incr       LDW     mathX
-                    LSLW
-                    STW     mathX
-                    LDW     mathRem
-                    SUBW    mathY
-                    BLT     divide16_incx
-                    STW     mathRem
-                    INC     mathX
-                    
-divide16_incx       LDW     mathMask
-                    LSLW
-                    BNE     divide16_loop
-%if TIME_SLICING
-                    PUSH
-                    CALL    realTimeStubAddr
-                    POP
-%endif
-                    LDW     mathSign
-                    BGE     divide16_exit
-                    LDI     0
-                    SUBW    mathX
-                    RET
-                    
-divide16_exit       LDW     mathX
-                    RET
-
-
 shiftRight1bit      LDWI    SYS_LSRW1_48
                     STW     giga_sysFn
                     LDW     mathShift
                     SYS     48
+                    RET
+
+
+shiftRight5bit      LDWI    SYS_LSRW5_50
+                    STW     giga_sysFn
+                    LDW     mathShift
+                    SYS     50
                     RET
 
 

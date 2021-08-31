@@ -11,6 +11,7 @@ lutIndex            EQU     register8
 romType             EQU     register0
 romErrAddr          EQU     register1
 romErrPixel         EQU     register2
+romReadAddr         EQU     register0
 
 
 %SUB                romCheck
@@ -18,15 +19,30 @@ romCheck            LD      giga_romType
                     ANDI    0xFC
                     SUBW    romType
                     BGE     romC_return
-                    LDWI    giga_vram
+                    LDWI    giga_vram + giga_yres/2*256 + giga_xres/2
                     STW     romErrAddr
                     
 romC_loop           LD      romErrPixel
                     POKE    romErrAddr
                     INC     romErrPixel
-                    BRA     romC_loop                       ; flash left hand corner pixel indicating rom error
+                    BRA     romC_loop                       ; flash center pixel indicating rom error
                     
 romC_return         RET                    
+%ENDS
+
+%SUB                romExec
+romExec             STW     giga_vLR
+                    LDI     SYS_Exec_88                     ; address < 0x0100 so use LDI
+                    STW     giga_sysFn
+                    SYS     88                              ; doesn't return from here!
+%ENDS
+
+%SUB                romRead
+romRead             LDI     SYS_ReadRomDir_v5_80            ; address < 0x0100 so use LDI
+                    STW     giga_sysFn
+                    LDW     romReadAddr
+                    SYS     80
+                    RET
 %ENDS
 
 %SUB                realTimeStub
